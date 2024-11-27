@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Button, Input, Form, Typography, message } from "antd";
 import { MailOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-import AuthApi from "../../api/AuthApi";  
+import AuthApi from "../../api/AuthApi";
 
 const { Title } = Typography;
 
