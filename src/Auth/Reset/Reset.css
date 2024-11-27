@@ -1,0 +1,20 @@
+.reset-container {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 20px;
+    border: 1px solid #f0f0f0;
+    border-radius: 8px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  .screen-2{
+    background: hsl(213deg 85% 97%);
+    padding: 2em;                  
+    border-radius: 20px;
+    box-shadow: 0 0 2em hsl(231deg 62% 94%);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+  }
+  
+

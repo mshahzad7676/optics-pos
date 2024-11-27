@@ -11,6 +11,7 @@ import React, { useState, useEffect } from "react";
 import Login from "./Auth/Login";
 import SignUp from "./Auth/SignUp";
 import ResetPassword from "./Auth/Reset";
+import SetNewPassword from "./Auth/SetPassword";
 import AuthServieApi from "./api/AuthApi";
 
 // Protected route wrapper
@@ -131,7 +132,7 @@ function App() {
       />
 
       <Route path="/forgetpassword" element={<ResetPassword />} />
-
+      <Route path="/SetNewPassword" element={<SetNewPassword />} />
       <Route
         path="/*"
         element={

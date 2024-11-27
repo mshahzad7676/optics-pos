@@ -86,6 +86,48 @@ class AuthServieApi extends BaseApi {
       console.error("Unexpected error fetching user:", err);
       return null;
     }
+ 
   }
-}
+  static async sendResetLink(email) {
+    try {
+      const { data, error } = await this.supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: "http://localhost:3000/SetNewPassword", // Ensure it matches your frontend route
+      });
+      if (error) throw error;
+      return { data, error: null };
+    } catch (error) {
+      console.error("Error sending reset link:", error.message);
+      return { data: null, error };
+    }
+  }
+  // Update the user's password
+  static async updatePassword(newPassword) {
+    try {
+      // const url = new URL(window.location.href);
+      // const accessToken = url.searchParams.get("access_token");
+  
+      // if (!accessToken) {
+      //   throw new Error("Access token is missing. Please use the reset link from your email.");
+      // }
+  
+      // const { data: session, error: sessionError } = await this.supabase.auth.setSession({
+      //   access_token: accessToken,
+      //   refresh_token: "", // Not needed for password reset
+      // });
+  
+      // if (sessionError) throw new Error(sessionError.message);
+  
+      const { data, error } = await this.supabase.auth.updateUser({
+        password: newPassword,
+      });
+  
+      if (error) throw new Error(error.message);
+  
+      return { data, error: null };
+    } catch (error) {
+      console.error("Error updating password:", error.message);
+      return { data: null, error };
+    }
+  }
+} 
 export default AuthServieApi;
