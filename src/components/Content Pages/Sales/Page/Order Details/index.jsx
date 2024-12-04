@@ -13,7 +13,7 @@ function OrderDetails() {
   useEffect(() => {
     async function fetchData() {
       const data = await OrderTableApi.fetchOrderDetails(order_id);
-      console.log(data, "00");
+      // console.log(data, "00");
       setCustomerData(data?.[0]?.customers || []);
       setOrderData(data?.[0]?.order_items || []);
     }
@@ -22,7 +22,7 @@ function OrderDetails() {
 
   const columns = [
     {
-      title: "Order Id",
+      title: "Order Item Id",
       dataIndex: "order_item_id",
     },
     {

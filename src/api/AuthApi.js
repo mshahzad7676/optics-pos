@@ -86,13 +86,16 @@ class AuthServieApi extends BaseApi {
       console.error("Unexpected error fetching user:", err);
       return null;
     }
-
   }
+  // Send Reset Link
   static async sendResetLink(email) {
     try {
-      const { data, error } = await this.supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: "http://localhost:3000/SetNewPassword", // Ensure it matches your frontend route
-      });
+      const { data, error } = await this.supabase.auth.resetPasswordForEmail(
+        email,
+        {
+          redirectTo: "http://localhost:3000/SetNewPassword", // Ensure it matches your frontend route
+        }
+      );
       if (error) throw error;
       return { data, error: null };
     } catch (error) {

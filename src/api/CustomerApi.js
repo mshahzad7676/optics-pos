@@ -2,17 +2,6 @@ import BaseApi from "./BaseApi";
 
 class CustomerAPI extends BaseApi {
   // Method to createCustomer
-  // static async createCustomer(userData) {
-  //   try {
-  //     const { error } = await this.supabase.from("customers").insert(userData);
-
-  //     if (error) {
-  //       throw new Error(error.message);
-  //     }
-  //   } catch (e) {
-  //     console.error("Error creating customer:", e);
-  //   }
-  // }
   static async createCustomer(userData) {
     try {
       const { error } = await this.supabase.from("customers").insert({

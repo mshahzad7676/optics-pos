@@ -19,9 +19,7 @@ import {
 } from "@ant-design/icons";
 import { Button, Layout, Menu, theme, Avatar, Dropdown } from "antd";
 
-import Inventory from "../Content Pages/Inventory";
 import Estore from "../Content Pages/E-Store";
-import DynamicBreadcrumb from "../BreadCrumb";
 import Customers from "../Content Pages/Customers";
 import ViewVisitedHistory from "../Content Pages/Customers/Page/Visit History";
 import Addvisitcustomer from "../Content Pages/Customers/components/addvisit";
@@ -31,6 +29,13 @@ import OrderDetails from "../Content Pages/Sales/Page/Order Details";
 import { createContext } from "react";
 import UserApi from "../../api/UserApi";
 import StoreApi from "../../api/StoreApi";
+import Profile from "../../Auth/Profile";
+import Setting from "../../Auth/Setting";
+
+import FramesInventory from "../Content Pages/Inventory/components/Frames Inventory";
+import GlassesInventory from "../Content Pages/Inventory/components/Glasses Inventory";
+import AddItemDetails from "../Content Pages/Inventory/components/Glasses Inventory/addItemsDetails";
+import ViewPln_to_2 from "../Content Pages/Inventory/components/Glasses Inventory/Minus Ranges/Viewplnto2";
 
 const { Header, Sider, Content } = Layout;
 
@@ -39,7 +44,7 @@ export const AppContext = createContext({
   store: undefined,
 });
 
-function MainPage({ onLogout }) {
+function MainPage({ onLogout, password, setPassword }) {
   const [user, setUser] = useState();
   const [store, setStore] = useState();
   const [collapsed, setCollapsed] = useState(false);
@@ -65,7 +70,7 @@ function MainPage({ onLogout }) {
       }
 
       const userStore = await StoreApi.fetchStore(authUser.id);
-      console.log(userStore, "storehandle");
+      // console.log(userStore, "storehandle");
       if (userStore) {
         setStore(userStore.store);
       }
@@ -79,6 +84,14 @@ function MainPage({ onLogout }) {
     handlefetchUserAndStore();
   }, []);
 
+  const handleProfile = () => {
+    navigate("/profile");
+  };
+
+  const handleSetting = () => {
+    navigate("/setting");
+  };
+
   const userMenu = (
     <Menu
       items={[
@@ -86,11 +99,13 @@ function MainPage({ onLogout }) {
           key: "1",
           icon: <UserOutlined />,
           label: "Profile",
+          onClick: handleProfile,
         },
         {
           key: "2",
           icon: <SettingOutlined />,
           label: "Settings",
+          onClick: handleSetting,
         },
         {
           key: "3",
@@ -145,16 +160,34 @@ function MainPage({ onLogout }) {
           </div>
 
           {/* Menu with routing links */}
-          <Menu mode="vertical" theme="dark">
+          <Menu
+            mode="inline"
+            defaultOpenKeys={["3"]}
+            defaultSelectedKeys={["1"]}
+            theme="dark"
+          >
             <Menu.Item key="1" icon={<UserOutlined />}>
               <Link to="/">Customers</Link>
             </Menu.Item>
             <MenuItem key="2" icon={<BarChartOutlined />}>
               <Link to="/sales">Sales</Link>
             </MenuItem>
-            <Menu.Item key="3" icon={<DatabaseOutlined />}>
-              <Link to="/inventory">Inventory</Link>
-            </Menu.Item>
+            <Menu.SubMenu
+              key="3"
+              icon={<DatabaseOutlined />}
+              defaultSelectedKeys={[3 - 1]}
+              title="Inventory"
+            >
+              <Menu.Item key="3-1">
+                <Link to="/frames">Frames</Link>
+              </Menu.Item>
+              <Menu.Item key="3-2">
+                <Link to="/glasses">Glasses</Link>
+              </Menu.Item>
+              <Menu.Item key="3-3">
+                <Link to="/contactlense">Contact Lense</Link>
+              </Menu.Item>
+            </Menu.SubMenu>
             <Menu.Item key="4" icon={<ShoppingCartOutlined />}>
               <Link to="/estore">E-Store</Link>
             </Menu.Item>
@@ -209,7 +242,8 @@ function MainPage({ onLogout }) {
                     {/* <span style={{ marginRight: "12px" }}>John Doe</span>
                      */}
                     <span style={{ marginRight: "12px" }}>
-                      {user?.email || "Guest"}
+                      {/* {user?.email || "Guest"} */}
+                      {user?.user_metadata.name || user?.email}
                     </span>
                   </div>
                 </Dropdown>
@@ -232,9 +266,21 @@ function MainPage({ onLogout }) {
             {/* Define routes for your components */}
             <Routes>
               <Route path="/" element={<Customers />} />
-              <Route path="/inventory" element={<Inventory />} />
+              <Route path="/frames" element={<FramesInventory />} />
+              <Route path="/glasses" element={<GlassesInventory />} />
+              {/* <Route path="/contactlense" element={<ContactLenseInventory />} /> */}
               <Route path="/estore" element={<Estore />} />
               <Route path="/sales" element={<Sales />}></Route>
+              <Route path="/profile" element={<Profile></Profile>} />
+              <Route
+                path="/setting"
+                element={
+                  <Setting
+                    password={password}
+                    setPassword={setPassword}
+                  ></Setting>
+                }
+              />
               <Route
                 path="/view-visited-history/:customerId"
                 element={<ViewVisitedHistory></ViewVisitedHistory>}
@@ -259,10 +305,14 @@ function MainPage({ onLogout }) {
                 path="/orderdetails"
                 element={<OrderDetails></OrderDetails>}
               ></Route>
-              {/* <Route
-                  path="/orderviewdetails/:orderid"
-                  element={<OrderViewDetails></OrderViewDetails>}
-                ></Route> */}
+              <Route
+                path="/addItemsDetails/:glass_type_id"
+                element={<AddItemDetails></AddItemDetails>}
+              ></Route>
+              <Route
+                path="/viewItemsDetails/:glass_type_id"
+                element={<ViewPln_to_2></ViewPln_to_2>}
+              ></Route>
             </Routes>
           </Content>
         </Layout>

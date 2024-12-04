@@ -1,8 +1,9 @@
-import React, { useState } from "react";
-import { Button, Input } from "antd";
+import React, { useContext, useState } from "react";
+import { Button, Select, Row, Input, Col } from "antd";
 import { PlusCircleOutlined, SearchOutlined } from "@ant-design/icons";
-import CustomerTable from "./customer-table";
-import AddCustomer from "./Modals/Personal-Info/addmodal";
+import { AppContext } from "../../../../SideNav";
+import GlassTypeTable from "./GlasstypeTable";
+import AddItemModal from "./Modal/addGlassTypeModal";
 
 const suffix = (
   <SearchOutlined
@@ -13,9 +14,9 @@ const suffix = (
   />
 );
 
-function Customers() {
+function GlassesInventory(params) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [formData, setFormData] = useState({});
+  const { user, store } = useContext(AppContext);
   const [searchTerm, setSearchTerm] = useState("");
 
   const showModal = () => {
@@ -28,6 +29,7 @@ function Customers() {
 
   return (
     <>
+      {" "}
       <div
         style={{
           display: "flex",
@@ -36,8 +38,7 @@ function Customers() {
           marginBottom: "10px",
         }}
       >
-        <h2>Customers Records</h2>
-
+        <h2>Glasses Inventory</h2>
         <div
           style={{
             gap: "10px",
@@ -47,34 +48,33 @@ function Customers() {
         >
           <Input
             onChange={handleSearchChange}
-            placeholder="Name,Phone No"
-            enterButton
+            placeholder="Item Id, Name"
             suffix={suffix}
             style={{
-              fontSize: "16px",
-              width: 300,
+              fontSize: "14px",
+              width: 250,
             }}
           />
+
           <Button
-            onClick={showModal}
             type="primary"
             shape="round-large"
             icon={<PlusCircleOutlined />}
+            onClick={showModal}
           >
-            Add Record
+            Add Type
           </Button>
-          <AddCustomer
+          <AddItemModal
             open={isModalOpen}
             onModalClose={() => setIsModalOpen(false)}
-            setFormData={setFormData}
-          ></AddCustomer>
+            store={store}
+          ></AddItemModal>
         </div>
       </div>
-      <div className="table">
-        <CustomerTable searchTerm={searchTerm}></CustomerTable>
-      </div>
+      <br></br>
+      <GlassTypeTable searchTerm={searchTerm}></GlassTypeTable>
     </>
   );
 }
 
-export default Customers;
+export default GlassesInventory;

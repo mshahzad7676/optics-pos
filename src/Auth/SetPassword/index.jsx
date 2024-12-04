@@ -4,7 +4,6 @@ import { LockOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import AuthApi from "../../api/AuthApi";
 
-
 const { Title } = Typography;
 
 const SetNewPassword = () => {
@@ -24,7 +23,9 @@ const SetNewPassword = () => {
     const { data, error } = await AuthApi.updatePassword(newPassword);
 
     if (error) {
-      message.error(error.message || "Failed to update password. Please try again.");
+      message.error(
+        error.message || "Failed to update password. Please try again."
+      );
     } else {
       message.success("Password updated successfully!");
       navigate("/login"); // Redirect to login page
@@ -53,19 +54,25 @@ const SetNewPassword = () => {
               { min: 6, message: "Password must be at least 6 characters." },
             ]}
           >
-            <Input.Password prefix={<LockOutlined />} placeholder="Enter new password" />
+            <Input.Password
+              prefix={<LockOutlined />}
+              placeholder="Enter new password"
+            />
           </Form.Item>
 
           {/* Confirm Password */}
           <Form.Item
             label="Confirm Password"
             name="confirmPassword"
+            maxLength={8}
             rules={[
               { required: true, message: "Please confirm your password!" },
-              { min: 6, message: "Password must be at least 6 characters." },
             ]}
           >
-            <Input.Password prefix={<LockOutlined />} placeholder="Confirm new password" />
+            <Input.Password
+              prefix={<LockOutlined />}
+              placeholder="Confirm new password"
+            />
           </Form.Item>
 
           {/* Update Password Button */}

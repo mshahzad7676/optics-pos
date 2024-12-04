@@ -1,6 +1,7 @@
 import BaseApi from "./BaseApi";
 
 class UserApi extends BaseApi {
+  // fetchUser
   static async fetchUser() {
     try {
       const {
@@ -15,6 +16,26 @@ class UserApi extends BaseApi {
       return user;
     } catch (error) {
       console.error("Error fetching authenticated user:", error);
+      throw error;
+    }
+  }
+  //  updateUser Name and Phone no
+  static async updateUserProfile(updatedData) {
+    try {
+      const { data, error } = await this.supabase.auth.updateUser({
+        data: {
+          name: updatedData.name,
+        },
+      });
+
+      if (error) {
+        throw new Error(`Update Error: ${error.message}`);
+      }
+
+      console.log("User profile updated successfully:", data);
+      return data;
+    } catch (error) {
+      console.error("Error updating user profile:", error);
       throw error;
     }
   }

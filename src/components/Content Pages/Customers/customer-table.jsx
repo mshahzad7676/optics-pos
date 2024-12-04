@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Table, Button, Popconfirm } from "antd";
+import { Table, Button, Modal } from "antd";
 import {
   DeleteOutlined,
   EditOutlined,
   EyeTwoTone,
   PlusSquareTwoTone,
+  ExclamationCircleFilled,
 } from "@ant-design/icons";
 import CustomerAPI from "../../../api/CustomerApi";
 import { useNavigate } from "react-router-dom";
@@ -52,6 +53,18 @@ function CustomerTable({ searchTerm }) {
     if (isDeleted) {
       setCustomers(customers.filter((customer) => customer.id !== customerId));
     }
+  };
+  const { confirm } = Modal;
+  const showDeleteConfirm = (customerId) => {
+    confirm({
+      title: "Are you sure delete this Customer?",
+      icon: <ExclamationCircleFilled />,
+      okText: "Yes",
+      okType: "danger",
+      cancelText: "No",
+      onOk: () => handleDelete(customerId),
+      onCancel() {},
+    });
   };
 
   const showEditModal = (customer) => {
@@ -127,16 +140,15 @@ function CustomerTable({ searchTerm }) {
           >
             <PlusSquareTwoTone twoToneColor="#52c41a" />
           </Button>
-          <Popconfirm
-            title="Are you sure you want to delete this customer?"
-            onConfirm={() => handleDelete(record.id)}
-            okText="Yes"
-            cancelText="No"
+
+          <Button
+            color="danger"
+            variant="filled"
+            size="small"
+            onClick={() => showDeleteConfirm(record.id)}
           >
-            <Button color="danger" variant="filled" size="small">
-              <DeleteOutlined />
-            </Button>
-          </Popconfirm>
+            <DeleteOutlined />
+          </Button>
         </div>
       ),
     },

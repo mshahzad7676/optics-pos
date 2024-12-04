@@ -2,6 +2,13 @@
   font-family: "Poppins", sans-serif;
 }
 
+.container1 {
+  display: flex;
+  margin-top: -70px;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
 .container {
   display: flex;
   justify-content: center;
@@ -37,7 +44,7 @@
 }
 .signup-footer {
   text-align: center;
-  font-size: 0.9em;
+  font-size: 1.5em;
   color: hsl(0deg 0% 37%);
   padding-top: 1em;
 }

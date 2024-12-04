@@ -13,6 +13,8 @@ import SignUp from "./Auth/SignUp";
 import ResetPassword from "./Auth/Reset";
 import SetNewPassword from "./Auth/SetPassword";
 import AuthServieApi from "./api/AuthApi";
+import Profile from "./Auth/Profile";
+import Setting from "./Auth/Setting";
 
 // Protected route wrapper
 function ProtectedRoute({ isAuthenticated, children }) {
@@ -102,6 +104,7 @@ function App() {
       navigate("/login");
     }
   };
+
   return (
     // <Router>
     <Routes>
@@ -137,7 +140,11 @@ function App() {
         path="/*"
         element={
           // <ProtectedRoute isAuthenticated={isAuthenticated}>
-          <MainPage onLogout={handleSignOut} />
+          <MainPage
+            password={password}
+            setPassword={setPassword}
+            onLogout={handleSignOut}
+          />
           // </ProtectedRoute>
         }
       />
