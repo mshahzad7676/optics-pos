@@ -6,6 +6,7 @@ export const glassItemType = [
 ];
 
 export const glassMinusRange = [
+  { label: "Plain to -2.00 / 2", value: "Plain to -2.00 / 2" },
   { label: "-16.25 to -20.00", value: "-16.25 to -20.00" },
   { label: "-12.25 to -16.00", value: "-12.25 to -16.00" },
   { label: "-10.25 to -12.00", value: "-10.25 to -12.00" },
@@ -23,7 +24,10 @@ export const glassMinusRange = [
   { label: "+10.25 to +12.00", value: "+10.25 to +12.00" },
   { label: "+12.25 to +16.00", value: "+12.25 to +16.00" },
   { label: "+16.25 to +20.00", value: "+16.25 to +20.00" },
+  { label: "+1.00 to +3.00 Add +1.00", value: "+1.00 to +3.00 Add +1.00" },
 ];
+
+const glassRangeAdd = [];
 
 // function createCustomRanges() {
 //   const range = [];

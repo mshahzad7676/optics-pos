@@ -3,18 +3,18 @@ import { Form, Input, Row, Col, Typography, Button } from "antd";
 import { useParams } from "react-router-dom";
 import AdditemDetail from "../../../../../../api/Glasses Inventory/Minus Ranges/AdditemDetail";
 
-function Plnto2({ glassMinusRange, data }) {
+function Add1_OnetoThree({ glassMinusRange, data }) {
   const [dataSource, setDataSource] = useState([]);
   const [loading, setLoading] = useState(false);
   const { glass_type_id } = useParams();
   const [form] = Form.useForm();
 
   useEffect(() => {
-    if (glassMinusRange === "Plain to -2.00") {
+    if (glassMinusRange === "+1.00 to +3.00 Add +1.00") {
       const rows = [];
-      let current = 0;
+      let current = 0.0;
 
-      while (current >= -2) {
+      while (current <= +3) {
         const currentValue = current;
         const existingData = data.find(
           (item) => parseFloat(item.sph) === currentValue
@@ -23,14 +23,16 @@ function Plnto2({ glassMinusRange, data }) {
         rows.push({
           id: existingData?.id,
           key: rows.length + 1,
-          sph: current === 0 ? "0.00" : current.toFixed(2),
+          sph: current === 0 ? "0.00" : `+${current.toFixed(2)}`,
+          add: "100",
           quantity: existingData ? existingData.held_quantity : "0",
           newQuantity: "0",
           price: existingData ? existingData.price : "0",
         });
 
-        current -= 0.25;
+        current += 0.25;
       }
+
       setDataSource(rows);
     } else {
       setDataSource([]);
@@ -134,6 +136,18 @@ function Plnto2({ glassMinusRange, data }) {
                 marginBottom: 20,
               }}
             >
+              Addition
+            </Typography.Title>
+          </Col>
+          <Col span={4}>
+            <Typography.Title
+              level={2}
+              style={{
+                fontWeight: "bold",
+                fontSize: 20,
+                marginBottom: 20,
+              }}
+            >
               Held Quantity
             </Typography.Title>
           </Col>
@@ -166,6 +180,9 @@ function Plnto2({ glassMinusRange, data }) {
           <Row key={item.key} gutter={16} style={{ marginBottom: "10px" }}>
             <Col span={4}>
               <strong>{item.sph}</strong>
+            </Col>
+            <Col span={4}>
+              <strong>{item.add}</strong>
             </Col>
             <Col span={4}>
               <Input
@@ -214,4 +231,4 @@ function Plnto2({ glassMinusRange, data }) {
   );
 }
 
-export default Plnto2;
+export default Add1_OnetoThree;

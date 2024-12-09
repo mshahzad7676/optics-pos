@@ -1,6 +1,6 @@
 import BaseApi from "../../BaseApi";
 
-class PlaintoMinus2 extends BaseApi {
+class AdditemDetail extends BaseApi {
   // add Item Details
   static async addDetails(processedData, glass_type_id, glassMinusRange) {
     try {
@@ -9,14 +9,21 @@ class PlaintoMinus2 extends BaseApi {
         return;
       }
 
-      const upsertData = processedData.map((item) => ({
-        num: item.num,
-        held_quantity: item.quantity || "0",
-        price: item.price || "0",
-        hc_id: glass_type_id,
-        range: glassMinusRange,
-        id: item.id ? item.id : undefined,
-      }));
+      const upsertData = processedData.map((item) => {
+        let tempItem = {
+          sph: item.sph,
+          cyl: item.cyl,
+          addition: item.add,
+          held_quantity: item.quantity || "0",
+          price: item.price || "0",
+          hc_id: glass_type_id,
+          range: glassMinusRange,
+        };
+        if (item.id) {
+          tempItem.id = item.id;
+        }
+        return tempItem;
+      });
 
       console.log("Upserting Data:", upsertData);
 
@@ -70,9 +77,14 @@ class PlaintoMinus2 extends BaseApi {
   // fetch all data  and by filters
   static async fetchAllDetails(selectedRangeFilter) {
     try {
-      let query = this.supabase.from("glass_details").select(`
+      let query = this.supabase
+        .from("glass_details")
+        .select(
+          `
           *
-        `);
+        `
+        )
+        .order("id", { ascending: true });
 
       if (selectedRangeFilter) {
         query = query.eq("range", selectedRangeFilter);
@@ -94,4 +106,4 @@ class PlaintoMinus2 extends BaseApi {
   }
 }
 
-export default PlaintoMinus2;
+export default AdditemDetail;

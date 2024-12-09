@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 
 import { Typography, Select, Col, Row, Table } from "antd";
 import { useParams } from "react-router-dom";
-import PlaintoMinus2 from "../../../../../../api/Glasses Inventory/Minus Ranges/plnto2";
+import AdditemDetail from "../../../../../../api/Glasses Inventory/Minus Ranges/AdditemDetail";
 import { glassMinusRange } from "../../../../../../utils/constants";
 
 function ViewPln_to_2() {
@@ -26,7 +26,7 @@ function ViewPln_to_2() {
           selectedRangeFilter === "All" || !selectedRangeFilter
             ? undefined
             : selectedRangeFilter;
-        const { success, data } = await PlaintoMinus2.fetchAllDetails(filter);
+        const { success, data } = await AdditemDetail.fetchAllDetails(filter);
         setItemData(data);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -49,8 +49,18 @@ function ViewPln_to_2() {
     //   dataIndex: "range",
     // },
     {
-      title: "Number",
-      dataIndex: "num",
+      title: "Sph",
+      dataIndex: "sph",
+    },
+    {
+      title: "Cyl",
+      dataIndex: "cyl",
+      hidden: selectedRangeFilter && !selectedRangeFilter?.includes("/"),
+    },
+    {
+      title: "Addition",
+      dataIndex: "addition",
+      hidden: selectedRangeFilter && !selectedRangeFilter?.includes("Add"),
     },
     {
       title: "Quantity",
@@ -84,7 +94,12 @@ function ViewPln_to_2() {
       <h2 style={{ marginTop: 25 }}>
         {selectedRangeFilter ? `Range: ${selectedRangeFilter}` : "All Items"}
       </h2>
-      <Table columns={columns} rowKey="id" dataSource={itemData} />
+      <Table
+        columns={columns}
+        pagination={false}
+        rowKey="id"
+        dataSource={itemData}
+      />
     </>
   );
 }

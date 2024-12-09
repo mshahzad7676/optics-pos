@@ -3,7 +3,9 @@ import React, { useEffect, useState } from "react";
 import { glassMinusRange, rangeData } from "../../../../../utils/constants";
 import Plnto2 from "./Minus Ranges/plnto2";
 import { useParams } from "react-router-dom";
-import PlaintoMinus2 from "../../../../../api/Glasses Inventory/Minus Ranges/plnto2";
+import AdditemDetail from "../../../../../api/Glasses Inventory/Minus Ranges/AdditemDetail";
+import Plnto2cly2 from "./Minus Ranges/plnto2cly2";
+import Add1_OnetoThree from "./Addition/Add1_OnetoThree";
 
 function AddItemDetails() {
   const { glass_type_id } = useParams();
@@ -20,7 +22,7 @@ function AddItemDetails() {
 
     const fetchData = async () => {
       try {
-        const response = await PlaintoMinus2.fetchDetails(
+        const response = await AdditemDetail.fetchDetails(
           glass_type_id,
           selectedRange
         );
@@ -54,6 +56,7 @@ function AddItemDetails() {
         <Col>
           <Select
             showSearch
+            allowClear
             defaultValue="Plain to -2.00"
             placeholder="Select Range "
             optionFilterProp="label"
@@ -69,6 +72,15 @@ function AddItemDetails() {
 
       {selectedRange === "Plain to -2.00" && (
         <Plnto2 data={data} glassMinusRange={selectedRange} />
+      )}
+      {selectedRange === "Plain to -2.00 / 2" && (
+        <Plnto2cly2 data={data} glassMinusRange={selectedRange}></Plnto2cly2>
+      )}
+      {selectedRange === "+1.00 to +3.00 Add +1.00" && (
+        <Add1_OnetoThree
+          data={data}
+          glassMinusRange={selectedRange}
+        ></Add1_OnetoThree>
       )}
     </>
   );

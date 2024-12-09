@@ -32,7 +32,7 @@ function GlassTypeTable({ searchTerm }) {
   async function fetchGlassType(searchTerm) {
     try {
       const items = await GlassTypeApi.fetchGlassType(searchTerm, store.s_id);
-      console.log(item, "sum wala");
+      // console.log(item, "sum wala");
 
       if (items) {
         setItem(items);
