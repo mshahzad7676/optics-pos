@@ -160,6 +160,7 @@ function Sales() {
           </Card>
         </Col>
       </Row>
+
       <Orders></Orders>
     </>
   );

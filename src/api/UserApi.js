@@ -19,7 +19,7 @@ class UserApi extends BaseApi {
       throw error;
     }
   }
-  //  updateUser Name and Phone no
+  //  updateUser Name
   static async updateUserProfile(updatedData) {
     try {
       const { data, error } = await this.supabase.auth.updateUser({

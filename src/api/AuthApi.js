@@ -1,19 +1,6 @@
 import BaseApi from "./BaseApi";
 class AuthServieApi extends BaseApi {
-  // static async signUp(email, password) {
-  //   try {
-  //     const { data, error } = await this.supabase.auth.signUp({
-  //       email,
-  //       password,
-  //     });
-  //     if (error) throw error;
-  //     return { data, error: null };
-  //   } catch (error) {
-  //     console.error("Sign up error:", error.message);
-  //     return { data: null, error };
-  //   }
-  // }
-
+  // signUp User
   static async signUp(email, password, storeDescription) {
     try {
       // Sign up the user
@@ -35,17 +22,48 @@ class AuthServieApi extends BaseApi {
           name: email,
           description: storeDescription,
           u_id: userId,
-        });
-
+        })
+        .select()
+        .single();
       if (storeError) throw storeError;
 
-      return { data: { user: signUpData.user, store: storeData }, error: null };
+      //Create a member of member Table
+      const { data: memberData, error: memberError } = await this.supabase
+        .from("members")
+        .insert({ name: email, u_id: userId, s_id: storeData.s_id })
+        .select()
+        .single();
+
+      if (memberError) throw memberError;
+
+      return {
+        data: { user: signUpData.user, store: storeData, member: memberData },
+        error: null,
+      };
     } catch (error) {
-      console.error("Sign up or store creation error:", error.message);
+      console.error(
+        "Sign up, store creation, or member creation error:",
+        error.message
+      );
       return { data: null, error };
     }
   }
+  // update UserInfo
+  static async updateMember(memberData) {
+    try {
+      const { error } = await this.supabase
+        .from("members")
+        .update(memberData)
+        .eq("id", memberData.id);
+      if (error) {
+        throw new Error(error.message);
+      }
+    } catch (e) {
+      console.error("Error updating customer:", e);
+    }
+  }
 
+  // signIn user
   static async signIn(email, password) {
     try {
       const { data, error } = await this.supabase.auth.signInWithPassword({

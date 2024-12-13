@@ -6,17 +6,19 @@ export const glassItemType = [
 ];
 
 export const glassMinusRange = [
-  { label: "Plain to -2.00 / 2", value: "Plain to -2.00 / 2" },
-  { label: "-16.25 to -20.00", value: "-16.25 to -20.00" },
-  { label: "-12.25 to -16.00", value: "-12.25 to -16.00" },
-  { label: "-10.25 to -12.00", value: "-10.25 to -12.00" },
-  { label: "-8.25 to -10.00", value: "-8.25 to -10.00" },
-  { label: "-6.25 to -8.00", value: "-6.25 to -8.00" },
-  { label: "-4.25 to -6.00", value: "-4.25 to -6.00" },
-  { label: "-2.25 to -4.00", value: "-2.25 to -4.00" },
-  { label: "Plain to -2.00", value: "Plain to -2.00" },
+  { label: "Plain to -3.00 Add +1.00", value: "Plain to -3.00 Add +1.00" },
+  { label: "-2.25 to -4.00 / 2", value: "-2.25 to -4.00 / 2" }, //Group 1-1
+  { label: "Plain to -2.00 / 2", value: "Plain to -2.00 / 2" }, //Group 1-1
+  { label: "-16.25 to -20.00", value: "-16.25 to -20.00" }, //Group 8
+  { label: "-12.25 to -16.00", value: "-12.25 to -16.00" }, //Group 7
+  { label: "-10.25 to -12.00", value: "-10.25 to -12.00" }, //Group 6
+  { label: "-8.25 to -10.00", value: "-8.25 to -10.00" }, //Group 5
+  { label: "-6.25 to -8.00", value: "-6.25 to -8.00" }, //Group 4
+  { label: "-4.25 to -6.00", value: "-4.25 to -6.00" }, //Group 3
+  { label: "-2.25 to -4.00", value: "-2.25 to -4.00" }, //Group 2
+  { label: "Plain to -2.00", value: "Plain to -2.00" }, //Group 1
   { label: "All", value: "All" },
-  { label: "Plain to +2.00", value: "Plain to +2.00" },
+  { label: "Plain to +2.00", value: "0.00 to +2.00" },
   { label: "+2.25 to +4.00", value: "+2.25 to +4.00" },
   { label: "+4.25 to +6.00", value: "+4.25 to +6.00" },
   { label: "+6.25 to +8.00", value: "+6.25 to +8.00" },
@@ -24,7 +26,10 @@ export const glassMinusRange = [
   { label: "+10.25 to +12.00", value: "+10.25 to +12.00" },
   { label: "+12.25 to +16.00", value: "+12.25 to +16.00" },
   { label: "+16.25 to +20.00", value: "+16.25 to +20.00" },
-  { label: "+1.00 to +3.00 Add +1.00", value: "+1.00 to +3.00 Add +1.00" },
+  { label: "Plain to +2.00 / 2", value: "Plain to +2.00 / 2" },
+  { label: "Plain to +3.00 Add +1.00", value: "Plain to +3.00 Add +1.00" },
+  { label: "Plain to +3.00 Add +1.25", value: "Plain to +3.00 Add +1.25" },
+  { label: "Plain to +3.00 Add +1.50", value: "Plain to +3.00 Add +1.50" },
 ];
 
 const glassRangeAdd = [];

@@ -1,20 +1,26 @@
 import React, { useState, useEffect } from "react";
 import { Form, Input, Row, Col, Typography, Button } from "antd";
 import { useParams } from "react-router-dom";
-import AdditemDetail from "../../../../../../api/Glasses Inventory/Minus Ranges/AdditemDetail";
+import AdditemDetail from "../../../../../../api/Glasses Inventory/AdditemDetail";
 
-function Plnto2({ glassMinusRange, data }) {
+function SphericalNum({ glassMinusRange, data }) {
   const [dataSource, setDataSource] = useState([]);
   const [loading, setLoading] = useState(false);
   const { glass_type_id } = useParams();
   const [form] = Form.useForm();
 
   useEffect(() => {
-    if (glassMinusRange === "Plain to -2.00") {
-      const rows = [];
-      let current = 0;
+    const range = glassMinusRange.split(" "); // ['Plain', 'to', '-2.00'];
+    const start = range[0] === "Plain" ? 0 : parseFloat(range[0]);
+    const end = parseFloat(range[2]);
 
-      while (current >= -2) {
+    // if (glassMinusRange === "Plain to -2.00") {
+    const rows = [];
+    let current = start;
+
+    if (end <= 0) {
+      // negative range
+      while (current >= end) {
         const currentValue = current;
         const existingData = data.find(
           (item) => parseFloat(item.sph) === currentValue
@@ -31,10 +37,32 @@ function Plnto2({ glassMinusRange, data }) {
 
         current -= 0.25;
       }
-      setDataSource(rows);
-    } else {
-      setDataSource([]);
     }
+    if (end >= 0) {
+      // positive range
+      while (current <= end) {
+        const currentValue = current;
+        const existingData = data.find(
+          (item) => parseFloat(item.sph) === currentValue
+        );
+
+        rows.push({
+          id: existingData?.id,
+          key: rows.length + 1,
+          sph: current === 0 ? "0.00" : current.toFixed(2),
+          quantity: existingData ? existingData.held_quantity : "0",
+          newQuantity: "0",
+          price: existingData ? existingData.price : "0",
+        });
+
+        current += 0.25;
+      }
+    }
+
+    setDataSource(rows);
+    // } else {
+    //   setDataSource([]);
+    // }
   }, [glassMinusRange, data]);
 
   // Handle quantity change
@@ -214,4 +242,4 @@ function Plnto2({ glassMinusRange, data }) {
   );
 }
 
-export default Plnto2;
+export default SphericalNum;

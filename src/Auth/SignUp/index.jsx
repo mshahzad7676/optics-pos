@@ -9,15 +9,15 @@ function SignUp({ email, setEmail, password, setPassword, onSignUp }) {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const navigate = useNavigate();
   const handleLogin = () => {
-    navigate(`/login`);
+    navigate(`/`);
   };
 
   const handleSignUpFinish = async () => {
     // Trigger the sign-up process
-    const success = await onSignUp();
+    const { success, data } = await onSignUp();
     if (success) {
       // If sign-up is successful, navigate to login page
-      navigate(`/login`);
+      navigate(`/userInfo/${data?.member?.id}`);
     }
   };
   return (

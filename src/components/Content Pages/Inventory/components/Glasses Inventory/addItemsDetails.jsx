@@ -1,11 +1,11 @@
 import { Typography, Select, Col, Row, Spin, message } from "antd";
 import React, { useEffect, useState } from "react";
 import { glassMinusRange, rangeData } from "../../../../../utils/constants";
-import Plnto2 from "./Minus Ranges/plnto2";
+import SphericalNum from "./Minus Ranges/SphericalNum";
 import { useParams } from "react-router-dom";
-import AdditemDetail from "../../../../../api/Glasses Inventory/Minus Ranges/AdditemDetail";
-import Plnto2cly2 from "./Minus Ranges/plnto2cly2";
-import Add1_OnetoThree from "./Addition/Add1_OnetoThree";
+import AdditemDetail from "../../../../../api/Glasses Inventory/AdditemDetail";
+import CylindericalNum from "./Minus Ranges/CylindericalNum";
+import Addition from "./Addition/Addition";
 
 function AddItemDetails() {
   const { glass_type_id } = useParams();
@@ -39,6 +39,15 @@ function AddItemDetails() {
     fetchData();
   }, [glass_type_id, selectedRange]);
 
+  const getComponentToRender = () => {
+    if (selectedRange.includes(" / ")) {
+      return <CylindericalNum data={data} glassMinusRange={selectedRange} />;
+    } else if (selectedRange.includes("Add")) {
+      return <Addition data={data} glassMinusRange={selectedRange} />;
+    }
+    return <SphericalNum data={data} glassMinusRange={selectedRange} />;
+  };
+
   return (
     <>
       <Typography.Title
@@ -69,19 +78,7 @@ function AddItemDetails() {
           />
         </Col>
       </Row>
-
-      {selectedRange === "Plain to -2.00" && (
-        <Plnto2 data={data} glassMinusRange={selectedRange} />
-      )}
-      {selectedRange === "Plain to -2.00 / 2" && (
-        <Plnto2cly2 data={data} glassMinusRange={selectedRange}></Plnto2cly2>
-      )}
-      {selectedRange === "+1.00 to +3.00 Add +1.00" && (
-        <Add1_OnetoThree
-          data={data}
-          glassMinusRange={selectedRange}
-        ></Add1_OnetoThree>
-      )}
+      {getComponentToRender()}
     </>
   );
 }

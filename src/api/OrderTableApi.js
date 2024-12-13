@@ -13,6 +13,7 @@ class OrderTableApi extends BaseApi {
           order_date,
           total_items,
           total_price,
+          status,
           customers!inner (
             id,
             name,
@@ -177,6 +178,25 @@ class OrderTableApi extends BaseApi {
     } catch (e) {
       console.error("Error in fetchCustomerOrders:", e);
       return null;
+    }
+  }
+
+  // assign order to Member
+  static async assignOrder(order_id, member_id) {
+    try {
+      const { data, error } = await this.supabase
+        .from("orders")
+        .update({ m_id: member_id })
+        .eq("order_id", order_id);
+      if (error) {
+        console.error("Error updating assign field:", error);
+        throw new Error(error.message);
+      }
+
+      return data[0];
+    } catch (err) {
+      console.error("Failed to assign order:", err);
+      throw err;
     }
   }
 }

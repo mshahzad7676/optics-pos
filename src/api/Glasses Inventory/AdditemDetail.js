@@ -1,4 +1,4 @@
-import BaseApi from "../../BaseApi";
+import BaseApi from "../BaseApi";
 
 class AdditemDetail extends BaseApi {
   // add Item Details

@@ -35,7 +35,8 @@ import Setting from "../../Auth/Setting";
 import FramesInventory from "../Content Pages/Inventory/components/Frames Inventory";
 import GlassesInventory from "../Content Pages/Inventory/components/Glasses Inventory";
 import AddItemDetails from "../Content Pages/Inventory/components/Glasses Inventory/addItemsDetails";
-import ViewPln_to_2 from "../Content Pages/Inventory/components/Glasses Inventory/Minus Ranges/Viewplnto2";
+import ViewItemDetails from "../Content Pages/Inventory/components/Glasses Inventory/Minus Ranges/ViewItemDetails";
+import Employee from "../Content Pages/Employees";
 
 const { Header, Sider, Content } = Layout;
 
@@ -184,12 +185,12 @@ function MainPage({ onLogout, password, setPassword }) {
               <Menu.Item key="3-2">
                 <Link to="/glasses">Glasses</Link>
               </Menu.Item>
-              <Menu.Item key="3-3">
-                <Link to="/contactlense">Contact Lense</Link>
-              </Menu.Item>
             </Menu.SubMenu>
             <Menu.Item key="4" icon={<ShoppingCartOutlined />}>
               <Link to="/estore">E-Store</Link>
+            </Menu.Item>
+            <Menu.Item key="5" icon={<UserOutlined />}>
+              <Link to="/employee">Users</Link>
             </Menu.Item>
           </Menu>
         </Sider>
@@ -270,6 +271,7 @@ function MainPage({ onLogout, password, setPassword }) {
               <Route path="/glasses" element={<GlassesInventory />} />
               {/* <Route path="/contactlense" element={<ContactLenseInventory />} /> */}
               <Route path="/estore" element={<Estore />} />
+              <Route path="/employee" element={<Employee></Employee>}></Route>
               <Route path="/sales" element={<Sales />}></Route>
               <Route path="/profile" element={<Profile></Profile>} />
               <Route
@@ -311,7 +313,7 @@ function MainPage({ onLogout, password, setPassword }) {
               ></Route>
               <Route
                 path="/viewItemsDetails/:glass_type_id"
-                element={<ViewPln_to_2></ViewPln_to_2>}
+                element={<ViewItemDetails></ViewItemDetails>}
               ></Route>
             </Routes>
           </Content>

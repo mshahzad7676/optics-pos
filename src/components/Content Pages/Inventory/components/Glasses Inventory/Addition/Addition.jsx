@@ -1,20 +1,25 @@
 import React, { useState, useEffect } from "react";
 import { Form, Input, Row, Col, Typography, Button } from "antd";
 import { useParams } from "react-router-dom";
-import AdditemDetail from "../../../../../../api/Glasses Inventory/Minus Ranges/AdditemDetail";
+import AdditemDetail from "../../../../../../api/Glasses Inventory/AdditemDetail";
 
-function Add1_OnetoThree({ glassMinusRange, data }) {
+function Addition({ glassMinusRange, data }) {
   const [dataSource, setDataSource] = useState([]);
   const [loading, setLoading] = useState(false);
   const { glass_type_id } = useParams();
   const [form] = Form.useForm();
 
   useEffect(() => {
-    if (glassMinusRange === "+1.00 to +3.00 Add +1.00") {
-      const rows = [];
-      let current = 0.0;
-
-      while (current <= +3) {
+    const range = glassMinusRange.split(" "); // ['Plain' 'to', '+3.00', 'Add','+1.00'];
+    console.log(range);
+    const start = range[0] === "Plain" ? 0 : parseFloat(range[0]);
+    const end = parseFloat(range[2]);
+    const addvalue = parseFloat(range[4]);
+    // if (glassMinusRange === "+1.00 to +3.00 Add +1.00") {
+    const rows = [];
+    let current = start;
+    if (current >= 0) {
+      while (current <= end) {
         const currentValue = current;
         const existingData = data.find(
           (item) => parseFloat(item.sph) === currentValue
@@ -24,7 +29,8 @@ function Add1_OnetoThree({ glassMinusRange, data }) {
           id: existingData?.id,
           key: rows.length + 1,
           sph: current === 0 ? "0.00" : `+${current.toFixed(2)}`,
-          add: "100",
+          add: `+${addvalue.toFixed(2)}`,
+          // add: "100",
           quantity: existingData ? existingData.held_quantity : "0",
           newQuantity: "0",
           price: existingData ? existingData.price : "0",
@@ -32,11 +38,33 @@ function Add1_OnetoThree({ glassMinusRange, data }) {
 
         current += 0.25;
       }
-
-      setDataSource(rows);
-    } else {
-      setDataSource([]);
     }
+    if (current <= 0) {
+      while (current >= end) {
+        const currentValue = current;
+        const existingData = data.find(
+          (item) => parseFloat(item.sph) === currentValue
+        );
+
+        rows.push({
+          id: existingData?.id,
+          key: rows.length + 1,
+          sph: current === 0 ? "0.00" : current.toFixed(2),
+          add: `+${addvalue.toFixed(2)}`,
+          // add: "100",
+          quantity: existingData ? existingData.held_quantity : "0",
+          newQuantity: "0",
+          price: existingData ? existingData.price : "0",
+        });
+
+        current -= 0.25;
+      }
+    }
+
+    setDataSource(rows);
+    // } else {
+    //   setDataSource([]);
+    // }
   }, [glassMinusRange, data]);
 
   // Handle quantity change
@@ -231,4 +259,4 @@ function Add1_OnetoThree({ glassMinusRange, data }) {
   );
 }
 
-export default Add1_OnetoThree;
+export default Addition;

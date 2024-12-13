@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react";
 
 import { Typography, Select, Col, Row, Table } from "antd";
 import { useParams } from "react-router-dom";
-import AdditemDetail from "../../../../../../api/Glasses Inventory/Minus Ranges/AdditemDetail";
+import AdditemDetail from "../../../../../../api/Glasses Inventory/AdditemDetail";
 import { glassMinusRange } from "../../../../../../utils/constants";
 
-function ViewPln_to_2() {
+function ViewItemDetails() {
   const [rangeData, setRangeData] = useState({});
   const [itemData, setItemData] = useState([]);
   const [selectedRangeFilter, setSelectedRangeFlter] = useState(undefined);
@@ -18,7 +18,7 @@ function ViewPln_to_2() {
     setRangeData(ranges);
   }, []);
 
-  // fetch all data  and by filters
+  // fetch all data by filters
   useEffect(() => {
     async function fetchData() {
       try {
@@ -65,6 +65,8 @@ function ViewPln_to_2() {
     {
       title: "Quantity",
       dataIndex: "held_quantity",
+      defaultSortOrder: "descend",
+      sorter: (a, b) => a.held_quantity - b.held_quantity,
     },
     {
       title: "Price",
@@ -99,8 +101,9 @@ function ViewPln_to_2() {
         pagination={false}
         rowKey="id"
         dataSource={itemData}
+        showSorterTooltip={{ target: "sorter-icon" }}
       />
     </>
   );
 }
-export default ViewPln_to_2;
+export default ViewItemDetails;

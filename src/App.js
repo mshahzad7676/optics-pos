@@ -15,6 +15,8 @@ import SetNewPassword from "./Auth/SetPassword";
 import AuthServieApi from "./api/AuthApi";
 import Profile from "./Auth/Profile";
 import Setting from "./Auth/Setting";
+import UserInfo from "./Auth/SignUp/userInfo";
+import StoreInfo from "./Auth/SignUp/storeInfo";
 
 // Protected route wrapper
 function ProtectedRoute({ isAuthenticated, children }) {
@@ -25,6 +27,8 @@ function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [members, setMembers] = useState(null);
+
   const navigate = useNavigate();
 
   // useEffect(() => {
@@ -68,11 +72,19 @@ function App() {
 
     if (error) {
       console.log("Error during sign-up:", error.message);
-      return false;
+      return { data, success: false };
     } else {
       console.log("Sign-up successful! User and store created:", data);
-      return true;
+      return { data, success: true };
     }
+  };
+
+  const handleUpdateMember = async (updatedMember) => {
+    await AuthServieApi.updateMember(updatedMember);
+    const updatedMembers = members.map((member) =>
+      member.id === updatedMember.id ? updatedMember : member
+    );
+    setMembers(updatedMembers);
   };
 
   const handleSignIn = async () => {
@@ -133,6 +145,11 @@ function App() {
           />
         }
       />
+      <Route
+        path="/userInfo/:userId"
+        element={<UserInfo updateMember={handleUpdateMember}></UserInfo>}
+      ></Route>
+      {/* <Route path="/storeInfo" element={<StoreInfo></StoreInfo>}></Route> */}
 
       <Route path="/forgetpassword" element={<ResetPassword />} />
       <Route path="/SetNewPassword" element={<SetNewPassword />} />
