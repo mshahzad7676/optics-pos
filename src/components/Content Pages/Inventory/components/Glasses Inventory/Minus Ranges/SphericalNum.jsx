@@ -6,8 +6,9 @@ import AdditemDetail from "../../../../../../api/Glasses Inventory/AdditemDetail
 function SphericalNum({ glassMinusRange, data }) {
   const [dataSource, setDataSource] = useState([]);
   const [loading, setLoading] = useState(false);
-  const { glass_type_id } = useParams();
+  const { glass_type_id, glass_type } = useParams();
   const [form] = Form.useForm();
+  console.log(glass_type, "type");
 
   useEffect(() => {
     const range = glassMinusRange.split(" "); // ['Plain', 'to', '-2.00'];
@@ -126,6 +127,7 @@ function SphericalNum({ glassMinusRange, data }) {
       await AdditemDetail.addDetails(
         processedData,
         glass_type_id,
+        glass_type,
         glassMinusRange
       );
       console.log("Data successfully saved to the database!");
@@ -211,6 +213,7 @@ function SphericalNum({ glassMinusRange, data }) {
                 style={{ width: "100px" }}
                 placeholder="Enter new quantity"
                 type="number"
+                step={0.5}
               />
             </Col>
             <Col span={4}>

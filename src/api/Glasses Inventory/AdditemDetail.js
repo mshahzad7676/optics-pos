@@ -2,7 +2,12 @@ import BaseApi from "../BaseApi";
 
 class AdditemDetail extends BaseApi {
   // add Item Details
-  static async addDetails(processedData, glass_type_id, glassMinusRange) {
+  static async addDetails(
+    processedData,
+    glass_type_id,
+    glass_type,
+    glassMinusRange
+  ) {
     try {
       if (!processedData || processedData.length === 0) {
         console.error("Data source is empty or undefined.");
@@ -17,6 +22,7 @@ class AdditemDetail extends BaseApi {
           held_quantity: item.quantity || "0",
           price: item.price || "0",
           hc_id: glass_type_id,
+          glass_type: glass_type,
           range: glassMinusRange,
         };
         if (item.id) {
@@ -25,7 +31,7 @@ class AdditemDetail extends BaseApi {
         return tempItem;
       });
 
-      console.log("Upserting Data:", upsertData);
+      // console.log("Upserting Data:", upsertData);
 
       const { data, error } = await this.supabase
         .from("glass_details")
@@ -33,7 +39,7 @@ class AdditemDetail extends BaseApi {
         .select();
 
       if (error) {
-        console.log(data, "Api Response");
+        // console.log(data, "Api Response");
 
         return { success: false, error: "Failed to Add Item Details" };
       }
@@ -74,7 +80,7 @@ class AdditemDetail extends BaseApi {
       return { success: false, error: "Unexpected error occurred" };
     }
   }
-  // fetch all data  and by filters
+  // fetch all data by range filters
   static async fetchAllDetails(selectedRangeFilter) {
     try {
       let query = this.supabase
@@ -88,6 +94,54 @@ class AdditemDetail extends BaseApi {
 
       if (selectedRangeFilter) {
         query = query.eq("range", selectedRangeFilter);
+      }
+
+      const { data, error } = await query;
+
+      if (error) {
+        console.error("Error fetching details:", error);
+        return { success: false, error: "Failed to fetch data from database" };
+      }
+
+      console.log("Fetched Data:", data);
+      return { success: true, data };
+    } catch (error) {
+      console.error("Unexpected error while fetching details:", error);
+      return { success: false, error: "Unexpected error occurred" };
+    }
+  }
+  // fetch just glasstype
+  static async fetchGlassType() {
+    try {
+      const { data, error } = await this.supabase
+        .from("glass_details")
+        .select("glass_type");
+
+      if (error) {
+        console.error("Error fetching GlassType:", error);
+        return { success: false, error: "Failed to fetch data from database" };
+      }
+
+      console.log("Fetched Data:", data);
+      return { success: true, data };
+    } catch (error) {
+      console.error("Unexpected error while fetching details:", error);
+      return { success: false, error: "Unexpected error occurred" };
+    }
+  }
+
+  // fetch all data filter by type and range
+  static async fetchAllDetailsWithtype(filter) {
+    try {
+      let query = this.supabase.from("glass_details").select(
+        `
+          *
+        `
+      );
+
+      if (filter) {
+        query = query.eq("range", filter.lensRange);
+        query = query.eq("glass_type", filter.lensType);
       }
 
       const { data, error } = await query;

@@ -270,6 +270,7 @@ function CylindericalNum({ glassMinusRange, data }) {
                   style={{ width: "100px" }}
                   placeholder="Enter new quantity"
                   type="number"
+                  step={0.5}
                 />
               </Col>
               <Col span={4}>

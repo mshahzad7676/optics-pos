@@ -11,7 +11,7 @@ import { useNavigate } from "react-router-dom";
 
 import { AppContext } from "../../SideNav";
 import AddEmployee from "./Modal/addEmployeeModal";
-import MemberApi from "../../../api/Employee/MemberApi";
+import MemberApi from "../../../api/Member/MemberApi";
 
 function EmployeeTable({ searchTerm }) {
   const navigate = useNavigate();

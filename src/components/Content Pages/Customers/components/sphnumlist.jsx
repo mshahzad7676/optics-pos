@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Select } from "antd";
 
-function SphNumberSelector({ id, value = "0.00", onChange }) {
+export function SphNumberSelector({ id, value = "0.00", onChange }) {
   const [options, setOptions] = useState([]);
 
   // Function to generate numbers from -25.00 to 25.00 with 0.25 steps

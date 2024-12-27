@@ -22,7 +22,7 @@ import OrderTableApi from "../../../../api/OrderTableApi";
 import { ExclamationCircleFilled } from "@ant-design/icons";
 import { AppContext } from "../../../SideNav";
 import DropdownButton from "antd/es/dropdown/dropdown-button";
-import MemberApi from "../../../../api/Employee/MemberApi";
+import MemberApi from "../../../../api/Member/MemberApi";
 
 const { confirm } = Modal;
 
@@ -146,11 +146,14 @@ function OrderTable({ searchTerm }) {
     //   render: (_, record) => record.customers.phone,
     // },
     {
-      title: "Total Items",
+      title: "Order Summary",
       dataIndex: "total_items",
       render: (_, record) => (
         <Flex vertical align="start" justify="start">
-          {record.total_items}
+          <Typography.Text style={{ fontSize: "12px" }}>
+            <strong>Item Quantity: </strong>
+            {record.total_items}
+          </Typography.Text>
           <Typography.Text style={{ fontSize: "12px" }}>
             <strong>Total Price: </strong>
             {record.total_price}
@@ -173,7 +176,7 @@ function OrderTable({ searchTerm }) {
         <Select
           style={{ width: 90 }}
           allowClear
-          value={record.assign}
+          value={record.m_id}
           onChange={(value) => handleAssignOrder(record.order_id, value)}
         >
           {members.map((member) => (

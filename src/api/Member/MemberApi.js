@@ -18,7 +18,7 @@ class MemberApi extends BaseAdminApi {
       }
 
       // Insert additional details into the member table
-      const userId = authData.user.id; // Get the newly created user's ID
+      const userId = authData.user.id;
 
       const { data: memberRecord, error: memberError } = await this.supabase
         .from("members")
@@ -43,7 +43,22 @@ class MemberApi extends BaseAdminApi {
       return { success: false, message: error.message };
     }
   }
+  //  invite member with store id
+  static async inviteMember(email) {
+    try {
+      const { data: inviteMember, error: inviteError } =
+        await this.supabase.auth.admin.inviteUserByEmail(email);
 
+      if (inviteError) {
+        throw new Error(inviteError.message);
+      }
+      return { success: true, data: inviteMember };
+    } catch (error) {
+      return { success: false, message: error.message };
+    }
+  }
+
+  // fetchMember with store id
   static async fetchMember(searchTerm = "", s_id) {
     try {
       let query = this.supabase.from("members").select("*").eq("s_id", s_id);
@@ -80,6 +95,29 @@ class MemberApi extends BaseAdminApi {
     } catch (e) {
       console.error("Error deleting Member:", e);
       return false;
+    }
+  }
+  //  fetchMember with uuid
+  static async fetchallMembers(id) {
+    try {
+      // Fetch store data, allowing for multiple rows
+      const { data: storeMember, error: memberError } = await this.supabase
+        .from("members")
+        // .select("*")
+        .select(`id,name,phone,roles,s_id,u_id, e_store!inner(s_id,name,u_id)`)
+        .eq("u_id", id);
+
+      if (memberError) throw memberError;
+
+      if (!storeMember || storeMember.length === 0) {
+        throw new Error("No store found for the provided ID.");
+      }
+
+      // Return the first store if needed or all matching rows
+      return { memberRecord: storeMember, error: null }; // Use storeData for all rows
+    } catch (error) {
+      console.error("Error fetching store:", error.message);
+      return { member: null, error };
     }
   }
 }

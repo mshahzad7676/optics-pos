@@ -1,14 +1,7 @@
 import React, { useState } from "react";
 import { Button, Input } from "antd";
-import {
-  PlusCircleOutlined,
-  SearchOutlined,
-  UserAddOutlined,
-} from "@ant-design/icons";
-
-import AddEmployee from "./Modal/addEmployeeModal";
-import EmployeeTable from "./employee_table";
-import InviteModal from "./Modal/inviteModal";
+import { PlusCircleOutlined, SearchOutlined } from "@ant-design/icons";
+import TranscationTable from "./transcation-table";
 
 const suffix = (
   <SearchOutlined
@@ -19,18 +12,13 @@ const suffix = (
   />
 );
 
-function Employee() {
+function OrderTranscations() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
   const [formData, setFormData] = useState({});
   const [searchTerm, setSearchTerm] = useState("");
 
   const showModal = () => {
     setIsModalOpen(true);
-  };
-
-  const showInviteModal = () => {
-    setIsInviteModalOpen(true);
   };
 
   const handleSearchChange = (e) => {
@@ -47,7 +35,7 @@ function Employee() {
           marginBottom: "10px",
         }}
       >
-        <h2>Employee Records</h2>
+        <h2>Order Transcations</h2>
 
         <div
           style={{
@@ -66,38 +54,26 @@ function Employee() {
               width: 300,
             }}
           />
-          <Button
+          {/* <Button
             onClick={showModal}
             type="primary"
             shape="round-large"
-            icon={<UserAddOutlined />}
+            icon={<PlusCircleOutlined />}
           >
-            Add Member
+            Add Record
           </Button>
-          <AddEmployee
+          <AddCustomer
             open={isModalOpen}
             onModalClose={() => setIsModalOpen(false)}
             setFormData={setFormData}
-          ></AddEmployee>
-          <Button
-            onClick={showInviteModal}
-            type="primary"
-            shape="round-large"
-            icon={<UserAddOutlined />}
-          >
-            Invite Member
-          </Button>
-          <InviteModal
-            open={isInviteModalOpen}
-            onModalClose={() => setIsInviteModalOpen(false)}
-          ></InviteModal>
+          ></AddCustomer> */}
         </div>
       </div>
       <div className="table">
-        <EmployeeTable searchTerm={searchTerm}></EmployeeTable>
+        <TranscationTable searchTerm={searchTerm}></TranscationTable>
       </div>
     </>
   );
 }
 
-export default Employee;
+export default OrderTranscations;

@@ -13,10 +13,8 @@ import SignUp from "./Auth/SignUp";
 import ResetPassword from "./Auth/Reset";
 import SetNewPassword from "./Auth/SetPassword";
 import AuthServieApi from "./api/AuthApi";
-import Profile from "./Auth/Profile";
-import Setting from "./Auth/Setting";
 import UserInfo from "./Auth/SignUp/userInfo";
-import StoreInfo from "./Auth/SignUp/storeInfo";
+import MemberStores from "./components/Content Pages/Employees/Member Stores";
 
 // Protected route wrapper
 function ProtectedRoute({ isAuthenticated, children }) {
@@ -99,7 +97,8 @@ function App() {
       // if (user && user.id) {
       // navigate(`/user/${user.id}`);
       // }
-      navigate("/");
+      // navigate("/");
+      navigate("/memberstores");
       // localStorage.setItem("isAuthenticated", "true");
     }
   };
@@ -132,6 +131,11 @@ function App() {
           />
         }
       />
+
+      {/* <Route
+        path="/memberstores"
+        element={<MemberStores></MemberStores>}
+      ></Route> */}
 
       <Route
         path="/signup"

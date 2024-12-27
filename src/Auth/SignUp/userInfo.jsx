@@ -117,10 +117,11 @@ function UserInfo({ updateMember }) {
 
   // Handle Skip button click
   const handleSkip = () => {
-    navigate(`/`);
+    // navigate(`/`);
+    navigate(`/memberstore`);
   };
 
-  // Handle Login and Update button
+  // Handle Login and Update Member button
   const handleLogin_Update = async () => {
     try {
       const values = await form.validateFields();
@@ -130,7 +131,8 @@ function UserInfo({ updateMember }) {
         id: userId,
       });
 
-      navigate(`/`);
+      // navigate(`/`);
+      navigate(`/memberstore`);
     } catch (error) {
       console.error("Error updating member:", error);
     }

@@ -72,7 +72,7 @@ function SignUp({ email, setEmail, password, setPassword, onSignUp }) {
             />
           </Form.Item>
 
-          {/* Login Button */}
+          {/* Sign Up Button */}
           <Form.Item>
             <Button
               type="primary"

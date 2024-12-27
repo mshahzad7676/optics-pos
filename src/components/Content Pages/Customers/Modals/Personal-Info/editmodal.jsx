@@ -59,13 +59,13 @@ function EditCustomer({ open, onOk, onCancel, customer }) {
               <Form.Item
                 label="Email"
                 name="email"
-                rules={[
-                  { required: true, message: "Please enter the email" },
-                  {
-                    type: "email",
-                    message: "Please enter a valid email address",
-                  },
-                ]}
+                // rules={[
+                //   { required: true, message: "Please enter the email" },
+                //   {
+                //     type: "email",
+                //     message: "Please enter a valid email address",
+                //   },
+                // ]}
               >
                 <Input placeholder="Enter Email" />
               </Form.Item>

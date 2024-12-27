@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { Modal, Form, Input, Row, Col, Select } from "antd";
 import { MailOutlined, LockOutlined, EyeOutlined } from "@ant-design/icons";
 import { AppContext } from "../../../SideNav";
-import MemberApi from "../../../../api/Employee/MemberApi";
+import MemberApi from "../../../../api/Member/MemberApi";
 
 function AddEmployee({ open, onModalClose, setFormData, itemData }) {
   const [form] = Form.useForm();

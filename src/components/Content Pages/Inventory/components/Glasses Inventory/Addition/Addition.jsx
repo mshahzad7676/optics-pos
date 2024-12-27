@@ -11,7 +11,7 @@ function Addition({ glassMinusRange, data }) {
 
   useEffect(() => {
     const range = glassMinusRange.split(" "); // ['Plain' 'to', '+3.00', 'Add','+1.00'];
-    console.log(range);
+    // console.log(range);
     const start = range[0] === "Plain" ? 0 : parseFloat(range[0]);
     const end = parseFloat(range[2]);
     const addvalue = parseFloat(range[4]);
@@ -228,6 +228,7 @@ function Addition({ glassMinusRange, data }) {
                 style={{ width: "100px" }}
                 placeholder="Enter new quantity"
                 type="number"
+                step={0.5}
               />
             </Col>
             <Col span={4}>

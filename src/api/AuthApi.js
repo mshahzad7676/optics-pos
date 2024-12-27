@@ -30,7 +30,12 @@ class AuthServieApi extends BaseApi {
       //Create a member of member Table
       const { data: memberData, error: memberError } = await this.supabase
         .from("members")
-        .insert({ name: email, u_id: userId, s_id: storeData.s_id })
+        .insert({
+          name: email,
+          roles: "Admin",
+          u_id: userId,
+          s_id: storeData.s_id,
+        })
         .select()
         .single();
 

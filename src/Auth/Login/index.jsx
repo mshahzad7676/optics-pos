@@ -20,7 +20,8 @@ const Login = ({ email, setEmail, password, setPassword, onLogin }) => {
 
     if (email === "admin" && password === "admin") {
       onLogin();
-      navigate(`/`);
+      // navigate(`/`);
+      navigate(`/memberstore`);
     } else {
       alert("Invalid username or password");
     }

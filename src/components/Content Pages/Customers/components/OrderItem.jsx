@@ -1,8 +1,13 @@
-import React from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Row, Col, Select, Card, Button, Form } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 import EyewearInfo from "./eyewearinfo";
 import ContactLenseInfo from "./contactlensinfo";
+import GlassesInfo from "./glassesInfo";
+import CustomOrder from "./customOrder";
+import AdditemDetail from "../../../../api/Glasses Inventory/AdditemDetail";
+import GlassTypeApi from "../../../../api/Glasses Inventory/GlassTypeApi";
+import { AppContext } from "../../../SideNav";
 
 export default function OrderItem({
   onDelete,
@@ -49,6 +54,55 @@ export default function OrderItem({
   //   onChange(orderItem);
   // }, [orderItem, onChange]);
 
+  const [glassTypes, setGlassTypes] = useState([]);
+  const { store } = useContext(AppContext);
+  console.log(store);
+
+  useEffect(() => {
+    if (selectedCategory === "Glasses Inventory") {
+      fetchGlassType();
+    }
+  }, [selectedCategory]);
+
+  // Function to fetch glass types
+  // const fetchGlassTypes = async () => {
+  //   try {
+  //     const response = await GlassTypeApi.fetchGlassType(store.s_id);
+
+  //     const { data } = response;
+
+  //     if (data) {
+  //       setGlassTypes(data);
+  //     }
+  //     // if (data && Array.isArray(data)) {
+  //     //   const types = data.map((item) => item.glass_type);
+  //     //   setGlassTypes(types);
+  //     // }
+  //   } catch (error) {
+  //     console.error("Error fetching glass types:", error);
+  //   }
+  // };
+  // useEffect(() => {
+  //   fetchGlassTypes();
+  // }, []);
+  async function fetchGlassType() {
+    try {
+      const types = await GlassTypeApi.fetchGlassType("", store.s_id);
+      // console.log(item, "sum wala");
+
+      if (types) {
+        setGlassTypes(types);
+      }
+    } catch (error) {
+      console.error("Failed to fetch Items:", error);
+    }
+  }
+  useEffect(() => {
+    if (store?.s_id) {
+      fetchGlassType();
+    }
+  }, [store?.s_id]);
+
   return (
     <Card
       style={{ marginTop: 20, boxShadow: "0 4px 8px rgba(0, 0, 0, 0.3)" }}
@@ -78,7 +132,7 @@ export default function OrderItem({
             <Select
               // showSearch
               style={{
-                width: 300,
+                width: 250,
               }}
               placeholder="Select Category"
               defaultValue={selectedCategory}
@@ -103,6 +157,14 @@ export default function OrderItem({
                   value: "Sun Glasses",
                   label: "Sun Glasses",
                 },
+                {
+                  value: "Glasses Inventory",
+                  label: "Glasses Inventory",
+                },
+                {
+                  value: "Custom Glasses",
+                  label: "Custom Glasses",
+                },
               ]}
             />
           </Form.Item>
@@ -125,6 +187,21 @@ export default function OrderItem({
           key={key}
           name={name}
         />
+      ) : selectedCategory === "Glasses Inventory" ? (
+        <GlassesInfo
+          form={form}
+          onFinish={onFinish}
+          key={key}
+          name={name}
+          glassTypes={glassTypes}
+        ></GlassesInfo>
+      ) : selectedCategory === "Custom Glasses" ? (
+        <CustomOrder
+          name={name}
+          form={form}
+          onFinish={onFinish}
+          key={key}
+        ></CustomOrder>
       ) : null}
     </Card>
   );

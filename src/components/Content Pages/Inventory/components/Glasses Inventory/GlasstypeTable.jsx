@@ -66,8 +66,8 @@ function GlassTypeTable({ searchTerm }) {
       setItem(item.filter((item) => item.id !== item_id));
     }
   };
-  const handleAddItemDetails = (id) => {
-    navigate(`/addItemsDetails/${id}`);
+  const handleAddItemDetails = (id, glass_type) => {
+    navigate(`/addItemsDetails/${id}/${glass_type}`);
   };
   const handleViewItemDetails = (id) => {
     navigate(`/viewItemsDetails/${id}`);
@@ -108,7 +108,7 @@ function GlassTypeTable({ searchTerm }) {
 
           {/* Add Item Details */}
           <Button
-            onClick={() => handleAddItemDetails(record.id)}
+            onClick={() => handleAddItemDetails(record.id, record.name)}
             color="primary"
             size="small"
             variant="filled"

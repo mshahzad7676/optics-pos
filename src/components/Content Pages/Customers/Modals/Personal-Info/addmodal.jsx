@@ -7,7 +7,7 @@ function AddCustomer({ open, onModalClose, setFormData }) {
   const [form] = Form.useForm();
   const { user, store } = useContext(AppContext);
 
-  console.log(store, "in modal");
+  // console.log(store, "in modal");
 
   const closeModal = () => {
     form.resetFields();
@@ -72,7 +72,7 @@ function AddCustomer({ open, onModalClose, setFormData }) {
                 label="Email"
                 name="email"
                 rules={[
-                  // { required: true, message: "Please enter the email" },
+                  { required: true, message: "Please enter the email" },
                   {
                     type: "email",
                     message: "Please enter a valid email address",

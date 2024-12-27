@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Table, Descriptions, Typography } from "antd";
+import { Form, Col, Input, Select, Row } from "antd";
 import OrderTableApi from "../../../../../api/OrderTableApi";
 
 import PrescriptionView from "../../../Customers/components/PrescriptionView";
@@ -9,6 +10,7 @@ function OrderDetails() {
   const { order_id } = useParams();
   const [customerData, setCustomerData] = useState([]);
   const [orderData, setOrderData] = useState([]);
+  console.log(orderData, "order");
 
   useEffect(() => {
     async function fetchData() {
@@ -29,13 +31,37 @@ function OrderDetails() {
       title: "Order Category",
       render: (_, record) => record?.category,
     },
+    // {
+    //   title: "Total Price",
+    //   render: (_, record) => {
+    //     let orderItemPrice = 0;
+    //     Object.values(record?.order_item_object)?.forEach((item) => {
+    //       orderItemPrice += item.price ? parseInt(item.price) : 0;
+    //     });
+    //     return orderItemPrice;
+    //   },
+    // },
     {
       title: "Total Price",
       render: (_, record) => {
         let orderItemPrice = 0;
-        Object.values(record?.order_item_object)?.forEach((item) => {
-          orderItemPrice += item.price ? parseInt(item.price) : 0;
-        });
+
+        if (record?.order_item_object) {
+          Object.values(record.order_item_object).forEach((item) => {
+            if (item && typeof item === "object" && item.price) {
+              orderItemPrice += parseInt(item.price, 10);
+            }
+          });
+        }
+
+        if (record?.order_item_object?.custom) {
+          Object.values(record.order_item_object.custom).forEach((item) => {
+            if (item && item.price) {
+              orderItemPrice += parseInt(item.price, 10);
+            }
+          });
+        }
+
         return orderItemPrice;
       },
     },
@@ -153,6 +179,202 @@ function OrderDetails() {
                     }
                     orderData={record?.order_item_object.manualPrescription}
                   />
+                </>
+              );
+            } else if (record.category === "Glasses Inventory") {
+              return (
+                <>
+                  <Descriptions
+                    bordered
+                    column={{ xs: 1, sm: 2, md: 3, lg: 3, xl: 4, xxl: 4 }}
+                  >
+                    <Descriptions.Item label="Lense Type">
+                      {record?.order_item_object.glass?.type}
+                    </Descriptions.Item>
+                    <Descriptions.Item label="Lense Range ">
+                      {record?.order_item_object.glass?.range}
+                    </Descriptions.Item>
+                    <Descriptions.Item label="Quantity">
+                      {record?.order_item_object.glass?.quantity}
+                    </Descriptions.Item>
+                    <Descriptions.Item label="Price">
+                      {record?.order_item_object.glass?.price}
+                    </Descriptions.Item>
+                  </Descriptions>
+                </>
+              );
+            } else if (record.category === "Custom Glasses") {
+              return (
+                <>
+                  {/* <Descriptions
+                    bordered
+                    column={{ xs: 1, sm: 2, md: 3, lg: 3, xl: 4, xxl: 4 }}
+                  >
+                    <Descriptions.Item label="Lense Type">
+                      {record?.order_item_object.custom?.type}
+                    </Descriptions.Item>
+                    <Descriptions.Item label="Right Sph ">
+                      {record?.order_item_object.custom?.right.sph}
+                    </Descriptions.Item>
+                    <Descriptions.Item label="Right Cyl">
+                      {record?.order_item_object.custom?.right.cyl}
+                    </Descriptions.Item>
+                    <Descriptions.Item label="Right Addition">
+                      {record?.order_item_object.custom?.right.addition}
+                    </Descriptions.Item>
+                    <Descriptions.Item label="Right Price">
+                      {record?.order_item_object.custom?.right.price}
+                    </Descriptions.Item>
+                  </Descriptions> */}
+                  <div
+                    className="eyewear-info-container"
+                    style={{ padding: "0px 10px" }}
+                  >
+                    {/* Glass Type */}
+                    <Col span={6}>
+                      <Form.Item label="Lense Type">
+                        <Input
+                          readOnly
+                          value={record?.order_item_object.custom?.type}
+                        />
+                      </Form.Item>
+                    </Col>
+
+                    {/* Right Eye */}
+                    <Typography.Title
+                      level={4}
+                      style={{
+                        fontWeight: "bold",
+                        fontSize: 16,
+                      }}
+                    >
+                      Right Eye
+                    </Typography.Title>
+                    <Row gutter={16}>
+                      {/* Sph */}
+                      <Col span={4}>
+                        <Form.Item label="Sph">
+                          <Input
+                            readOnly
+                            value={record?.order_item_object.custom?.right?.sph}
+                          ></Input>
+                        </Form.Item>
+                      </Col>
+
+                      {/* Cyl */}
+                      <Col span={4}>
+                        <Form.Item label="Cyl">
+                          <Input
+                            readOnly
+                            value={record?.order_item_object.custom?.right?.cyl}
+                          />
+                        </Form.Item>
+                      </Col>
+                      {/* Addition */}
+                      <Col span={4}>
+                        <Form.Item label="Addition">
+                          <Input
+                            readOnly
+                            value={
+                              record?.order_item_object.custom?.right?.addition
+                            }
+                          />
+                        </Form.Item>
+                      </Col>
+
+                      {/* Lense Quantity */}
+                      <Col span={4}>
+                        <Form.Item label="Quantity">
+                          <Input
+                            readOnly
+                            value={
+                              record?.order_item_object.custom?.right?.quantity
+                            }
+                          />
+                        </Form.Item>
+                      </Col>
+
+                      {/* Lense Price */}
+                      <Col span={4}>
+                        <Form.Item label="Price">
+                          <Input
+                            readOnly
+                            value={
+                              record?.order_item_object.custom?.right?.price
+                            }
+                          />
+                        </Form.Item>
+                      </Col>
+                    </Row>
+
+                    {/* Left Eye */}
+                    <Typography.Title
+                      level={4}
+                      style={{
+                        fontWeight: "bold",
+                        fontSize: 16,
+                        marginTop: -15,
+                      }}
+                    >
+                      Left Eye
+                    </Typography.Title>
+                    <Row gutter={16}>
+                      {/* Sph */}
+                      <Col span={4}>
+                        <Form.Item label="Sph">
+                          <Input
+                            readOnly
+                            value={record?.order_item_object.custom?.left?.sph}
+                          ></Input>
+                        </Form.Item>
+                      </Col>
+
+                      {/* Cyl */}
+                      <Col span={4}>
+                        <Form.Item label="Cyl">
+                          <Input
+                            readOnly
+                            value={record?.order_item_object.custom?.left?.cyl}
+                          />
+                        </Form.Item>
+                      </Col>
+                      {/* Addition */}
+                      <Col span={4}>
+                        <Form.Item label="Addition">
+                          <Input
+                            readOnly
+                            value={
+                              record?.order_item_object.custom?.left?.addition
+                            }
+                          />
+                        </Form.Item>
+                      </Col>
+
+                      {/* Lense Quantity */}
+                      <Col span={4}>
+                        <Form.Item label="Quantity">
+                          <Input
+                            readOnly
+                            value={
+                              record?.order_item_object.custom?.left?.quantity
+                            }
+                          />
+                        </Form.Item>
+                      </Col>
+
+                      {/* Lense Price */}
+                      <Col span={4}>
+                        <Form.Item label="Price">
+                          <Input
+                            readOnly
+                            value={
+                              record?.order_item_object.custom?.left?.price
+                            }
+                          />
+                        </Form.Item>
+                      </Col>
+                    </Row>
+                  </div>
                 </>
               );
             }

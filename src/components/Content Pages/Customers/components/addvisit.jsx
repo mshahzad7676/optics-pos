@@ -7,6 +7,7 @@ import OrderItem from "./OrderItem";
 import { useNavigate } from "react-router-dom";
 import OrderApi from "../../../../api/OrderApi";
 import { AppContext } from "../../../SideNav";
+import TranscationApi from "../../../../api/TranscationApi";
 
 function AddVisitCustomer() {
   const [form] = Form.useForm();
@@ -48,6 +49,22 @@ function AddVisitCustomer() {
     setOrderItems(updatedItems);
   };
 
+  const orderTranscation = async (orderId, values) => {
+    const transcationPayload = {
+      order_id: orderId ? parseInt(orderId) : undefined,
+      c_id: parseInt(customer_id),
+      order_items: values.order_items,
+      s_id: store?.s_id,
+    };
+    try {
+      const data = await TranscationApi.addTranscation(transcationPayload);
+      console.log("Transcation created:", data);
+      // navigate(`/orderdetails/${data.orderData?.[0]?.order_id}`);
+    } catch (error) {
+      console.error("Error processing Transcation:", error);
+    }
+  };
+
   const onFinish = async (values) => {
     const payload = {
       order_id: order_id ? parseInt(order_id) : undefined, // Order ID from URL,
@@ -55,7 +72,7 @@ function AddVisitCustomer() {
       order_items: values.order_items,
       s_id: store?.s_id,
     };
-    console.log(payload);
+    // console.log(payload);
 
     try {
       // First, send the order data to OrderApi
@@ -63,6 +80,9 @@ function AddVisitCustomer() {
       console.log("Order created:", data);
 
       navigate(`/orderdetails/${data.orderData?.[0]?.order_id}`);
+
+      //Call the orderTranscation
+      await orderTranscation(data?.order_id, values);
     } catch (error) {
       console.error("Error processing order:", error);
     }

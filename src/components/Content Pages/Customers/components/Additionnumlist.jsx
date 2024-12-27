@@ -7,7 +7,7 @@ function AddtitionNumList({ id, value = "0.00", onChange }) {
   // Function to generate numbers from 0.00 to 3.00 with 0.25 steps
   const generateOptions = () => {
     const tempOptions = [];
-    for (let i = 0.0; i <= 3.0; i += 0.25) {
+    for (let i = 1.0; i <= 3.0; i += 0.25) {
       const formattedValue = i > 0 ? `+${i.toFixed(2)}` : i.toFixed(2);
       tempOptions.push({
         value: formattedValue,
