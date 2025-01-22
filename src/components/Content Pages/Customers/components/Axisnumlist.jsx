@@ -23,6 +23,7 @@ function AxisNumberSelector({ id, value = "0.00", onChange }) {
 
   return (
     <Select
+      allowClear
       showSearch
       style={{
         width: 100,

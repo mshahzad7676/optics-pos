@@ -18,7 +18,8 @@ class OrderTableApi extends BaseApi {
           customers!inner (
             id,
             name,
-            phone
+            phone,
+            store
           )
         `,
           { count: "exact" }
@@ -75,7 +76,7 @@ class OrderTableApi extends BaseApi {
             order_item_id,
             category,
             order_item_object
-          )
+          ),order_transactions(id,trans_type,total_price,balance)
         `
         )
         .order("order_id", { ascending: false });

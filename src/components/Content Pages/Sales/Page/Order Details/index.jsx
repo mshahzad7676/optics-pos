@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Table, Descriptions, Typography } from "antd";
+import { Table, Descriptions, Typography, Flex, Tag } from "antd";
 import { Form, Col, Input, Select, Row } from "antd";
 import OrderTableApi from "../../../../../api/OrderTableApi";
 
@@ -10,6 +10,7 @@ function OrderDetails() {
   const { order_id } = useParams();
   const [customerData, setCustomerData] = useState([]);
   const [orderData, setOrderData] = useState([]);
+  const [transactionData, setTransactionData] = useState([]);
   console.log(orderData, "order");
 
   useEffect(() => {
@@ -18,9 +19,34 @@ function OrderDetails() {
       // console.log(data, "00");
       setCustomerData(data?.[0]?.customers || []);
       setOrderData(data?.[0]?.order_items || []);
+      setTransactionData(data?.[0]?.order_transactions);
     }
     fetchData();
   }, [order_id]);
+
+  const column = [
+    {
+      title: "Transaction ID",
+      dataIndex: "id",
+    },
+    {
+      title: "Transaction Type",
+      dataIndex: "trans_type",
+      render: (_, record) => (
+        <Tag color={record.trans_type === "Credit" ? "green" : "red"}>
+          {record.trans_type}
+        </Tag>
+      ),
+    },
+    {
+      title: "Order Amount",
+      dataIndex: "total_price",
+    },
+    {
+      title: "Balance",
+      dataIndex: "balance",
+    },
+  ];
 
   const columns = [
     {
@@ -66,7 +92,13 @@ function OrderDetails() {
       },
     },
   ];
+  const getColumns = (records) => {
+    // Check if any record has `category` as "Glasses"
+    const isGlasses = records.some((record) => record.category === "Glasses");
 
+    // If "Glasses" exists, return an empty array of columns
+    return isGlasses ? [] : columns;
+  };
   return (
     <>
       <Typography.Title
@@ -96,9 +128,64 @@ function OrderDetails() {
       </Descriptions>
 
       <h2 style={{ marginTop: 25 }}>Order Details</h2>
+      {orderData?.[0]?.category === "Glasses" && (
+        <div
+          style={{
+            border: "1px solid black",
+            padding: "10px",
+            maxWidth: "550px",
+            marginLeft: "auto",
+            marginRight: "auto",
+          }}
+        >
+          <span style={{ display: "flex", justifyContent: "space-between" }}>
+            <Typography component="span">
+              Order Item ID: {orderData?.[0]?.order_item_id}
+            </Typography>
+            <Typography component="span">
+              Order Category: {orderData?.[0]?.category}
+            </Typography>
+          </span>
+          <br></br>
+
+          <Row
+            style={{
+              display: Flex,
+              justifyContent: "center",
+              borderBottom: "1px solid black",
+              paddingBottom: 5,
+            }}
+          >
+            <Col span={3}>Qty</Col>
+            <Col span={3}>Sph.</Col>
+            <Col span={3}>Cyl.</Col>
+            <Col span={3}>Add.</Col>
+            <Col span={3}>Price</Col>
+          </Row>
+          {orderData.map((data) => (
+            <Row
+              style={{
+                display: Flex,
+                justifyContent: "center",
+                borderBottom: "1px solid black",
+                marginBottom: 10,
+                marginTop: 10,
+              }}
+            >
+              <Col span={3}>{data.order_item_object.glass?.quantity}</Col>
+              <Col span={3}>{data.order_item_object?.glass?.sph}</Col>
+              <Col span={3}>{data.order_item_object?.glass?.cyl}</Col>
+              <Col span={3}>{data.order_item_object?.glass?.addition}</Col>
+              <Col span={3}>{data.order_item_object?.glass?.price}</Col>
+            </Row>
+          ))}
+        </div>
+      )}
 
       <Table
-        columns={columns}
+        // columns={columns}
+        columns={getColumns(orderData)}
+        pagination={false}
         rowKey="order_item_id"
         dataSource={orderData}
         expandable={{
@@ -114,8 +201,8 @@ function OrderDetails() {
                     column={{ xs: 1, sm: 2, md: 3, lg: 3, xl: 4, xxl: 4 }}
                     style={{ marginBottom: 20 }}
                   >
-                    <Descriptions.Item label="Frame Type">
-                      {record?.order_item_object.frame?.type}
+                    <Descriptions.Item label="Frame Category">
+                      {record?.order_item_object.frame?.category}
                     </Descriptions.Item>
                     <Descriptions.Item label="Frame Shape">
                       {record?.order_item_object.frame?.shape}
@@ -145,6 +232,121 @@ function OrderDetails() {
                       {record?.order_item_object.lens?.price}
                     </Descriptions.Item>
                   </Descriptions>
+                  <div
+                    style={{
+                      border: "1px solid black",
+                      padding: "10px",
+                      maxWidth: "550px",
+                      marginLeft: "auto",
+                      marginRight: "auto",
+                    }}
+                  >
+                    <span
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <Typography component="span">
+                        Order Item ID: {orderData?.[0]?.order_item_id}
+                      </Typography>
+                      <Typography component="span">
+                        Order Category: {orderData?.[0]?.category}
+                      </Typography>
+                    </span>
+                    <br></br>
+
+                    <Typography component="span">
+                      <strong>Frame Details</strong>
+                    </Typography>
+                    <Row
+                      style={{
+                        display: Flex,
+                        justifyContent: "center",
+                        borderBottom: "1px solid black",
+                        paddingBottom: 5,
+                      }}
+                    >
+                      <Col span={4}>Category</Col>
+                      <Col span={4}>Shape</Col>
+                      <Col span={4}>Comments</Col>
+                      <Col span={4}>Price</Col>
+                    </Row>
+                    {orderData.map((data) => (
+                      <Row
+                        style={{
+                          display: Flex,
+                          justifyContent: "center",
+                          borderBottom: "1px solid black",
+                          marginBottom: 10,
+                          marginTop: 10,
+                        }}
+                      >
+                        <Col span={4}>
+                          {data.order_item_object.frame?.category}
+                        </Col>
+                        <Col span={4}>
+                          {data.order_item_object?.frame?.shape}
+                        </Col>
+                        <Col span={4}>
+                          {data.order_item_object?.frame?.comment}
+                        </Col>
+
+                        <Col span={4}>
+                          {data.order_item_object?.frame?.price}
+                        </Col>
+                      </Row>
+                    ))}
+                    <Typography component="span">
+                      <strong>Lens Details</strong>
+                    </Typography>
+                    <Row
+                      style={{
+                        display: Flex,
+                        justifyContent: "center",
+                        borderBottom: "1px solid black",
+                        paddingBottom: 5,
+                      }}
+                    >
+                      <Col span={5}>Category</Col>
+                      <Col span={3}>Type</Col>
+                      <Col span={4}>Comments</Col>
+                      <Col span={4}>Price</Col>
+                    </Row>
+                    {orderData.map((data) => (
+                      <Row
+                        style={{
+                          display: Flex,
+                          justifyContent: "center",
+                          borderBottom: "1px solid black",
+                          marginBottom: 10,
+                          marginTop: 10,
+                        }}
+                      >
+                        <Col span={5}>
+                          {data.order_item_object.lens?.lcategory}
+                        </Col>
+                        <Col span={3}>{data.order_item_object?.lens?.type}</Col>
+                        <Col span={4}>
+                          {data.order_item_object?.lens?.comment}
+                        </Col>
+
+                        <Col span={4}>
+                          {data.order_item_object?.lens?.price}
+                        </Col>
+                      </Row>
+                    ))}
+                    <Row
+                      style={{
+                        display: "flex",
+                        justifyContent: "end",
+                      }}
+                    >
+                      <Col span={5}>Total Amount :</Col>
+                      <Col span={8}>{transactionData?.[0]?.total_price}</Col>
+                    </Row>
+                  </div>
+
                   <PrescriptionView
                     prescriptionType={
                       record?.order_item_object.prescriptionType
@@ -181,206 +383,44 @@ function OrderDetails() {
                   />
                 </>
               );
-            } else if (record.category === "Glasses Inventory") {
-              return (
-                <>
-                  <Descriptions
-                    bordered
-                    column={{ xs: 1, sm: 2, md: 3, lg: 3, xl: 4, xxl: 4 }}
-                  >
-                    <Descriptions.Item label="Lense Type">
-                      {record?.order_item_object.glass?.type}
-                    </Descriptions.Item>
-                    <Descriptions.Item label="Lense Range ">
-                      {record?.order_item_object.glass?.range}
-                    </Descriptions.Item>
-                    <Descriptions.Item label="Quantity">
-                      {record?.order_item_object.glass?.quantity}
-                    </Descriptions.Item>
-                    <Descriptions.Item label="Price">
-                      {record?.order_item_object.glass?.price}
-                    </Descriptions.Item>
-                  </Descriptions>
-                </>
-              );
-            } else if (record.category === "Custom Glasses") {
-              return (
-                <>
-                  {/* <Descriptions
-                    bordered
-                    column={{ xs: 1, sm: 2, md: 3, lg: 3, xl: 4, xxl: 4 }}
-                  >
-                    <Descriptions.Item label="Lense Type">
-                      {record?.order_item_object.custom?.type}
-                    </Descriptions.Item>
-                    <Descriptions.Item label="Right Sph ">
-                      {record?.order_item_object.custom?.right.sph}
-                    </Descriptions.Item>
-                    <Descriptions.Item label="Right Cyl">
-                      {record?.order_item_object.custom?.right.cyl}
-                    </Descriptions.Item>
-                    <Descriptions.Item label="Right Addition">
-                      {record?.order_item_object.custom?.right.addition}
-                    </Descriptions.Item>
-                    <Descriptions.Item label="Right Price">
-                      {record?.order_item_object.custom?.right.price}
-                    </Descriptions.Item>
-                  </Descriptions> */}
-                  <div
-                    className="eyewear-info-container"
-                    style={{ padding: "0px 10px" }}
-                  >
-                    {/* Glass Type */}
-                    <Col span={6}>
-                      <Form.Item label="Lense Type">
-                        <Input
-                          readOnly
-                          value={record?.order_item_object.custom?.type}
-                        />
-                      </Form.Item>
-                    </Col>
-
-                    {/* Right Eye */}
-                    <Typography.Title
-                      level={4}
-                      style={{
-                        fontWeight: "bold",
-                        fontSize: 16,
-                      }}
-                    >
-                      Right Eye
-                    </Typography.Title>
-                    <Row gutter={16}>
-                      {/* Sph */}
-                      <Col span={4}>
-                        <Form.Item label="Sph">
-                          <Input
-                            readOnly
-                            value={record?.order_item_object.custom?.right?.sph}
-                          ></Input>
-                        </Form.Item>
-                      </Col>
-
-                      {/* Cyl */}
-                      <Col span={4}>
-                        <Form.Item label="Cyl">
-                          <Input
-                            readOnly
-                            value={record?.order_item_object.custom?.right?.cyl}
-                          />
-                        </Form.Item>
-                      </Col>
-                      {/* Addition */}
-                      <Col span={4}>
-                        <Form.Item label="Addition">
-                          <Input
-                            readOnly
-                            value={
-                              record?.order_item_object.custom?.right?.addition
-                            }
-                          />
-                        </Form.Item>
-                      </Col>
-
-                      {/* Lense Quantity */}
-                      <Col span={4}>
-                        <Form.Item label="Quantity">
-                          <Input
-                            readOnly
-                            value={
-                              record?.order_item_object.custom?.right?.quantity
-                            }
-                          />
-                        </Form.Item>
-                      </Col>
-
-                      {/* Lense Price */}
-                      <Col span={4}>
-                        <Form.Item label="Price">
-                          <Input
-                            readOnly
-                            value={
-                              record?.order_item_object.custom?.right?.price
-                            }
-                          />
-                        </Form.Item>
-                      </Col>
-                    </Row>
-
-                    {/* Left Eye */}
-                    <Typography.Title
-                      level={4}
-                      style={{
-                        fontWeight: "bold",
-                        fontSize: 16,
-                        marginTop: -15,
-                      }}
-                    >
-                      Left Eye
-                    </Typography.Title>
-                    <Row gutter={16}>
-                      {/* Sph */}
-                      <Col span={4}>
-                        <Form.Item label="Sph">
-                          <Input
-                            readOnly
-                            value={record?.order_item_object.custom?.left?.sph}
-                          ></Input>
-                        </Form.Item>
-                      </Col>
-
-                      {/* Cyl */}
-                      <Col span={4}>
-                        <Form.Item label="Cyl">
-                          <Input
-                            readOnly
-                            value={record?.order_item_object.custom?.left?.cyl}
-                          />
-                        </Form.Item>
-                      </Col>
-                      {/* Addition */}
-                      <Col span={4}>
-                        <Form.Item label="Addition">
-                          <Input
-                            readOnly
-                            value={
-                              record?.order_item_object.custom?.left?.addition
-                            }
-                          />
-                        </Form.Item>
-                      </Col>
-
-                      {/* Lense Quantity */}
-                      <Col span={4}>
-                        <Form.Item label="Quantity">
-                          <Input
-                            readOnly
-                            value={
-                              record?.order_item_object.custom?.left?.quantity
-                            }
-                          />
-                        </Form.Item>
-                      </Col>
-
-                      {/* Lense Price */}
-                      <Col span={4}>
-                        <Form.Item label="Price">
-                          <Input
-                            readOnly
-                            value={
-                              record?.order_item_object.custom?.left?.price
-                            }
-                          />
-                        </Form.Item>
-                      </Col>
-                    </Row>
-                  </div>
-                </>
-              );
             }
           },
         }}
       />
+
+      {/* <Descriptions
+        bordered
+        column={{ xs: 1, sm: 2, md: 3, lg: 3, xl: 4, xxl: 4 }}
+      >
+        <Descriptions.Item label="Transcation ID">
+          {transactionData?.[0]?.id}
+        </Descriptions.Item>
+        <Descriptions.Item label="Transcation Type">
+          {transactionData?.[0]?.trans_type}
+        </Descriptions.Item>
+        <Descriptions.Item label="Total Order Price">
+          {transactionData?.[0]?.total_price}
+        </Descriptions.Item>
+        <Descriptions.Item label="Balance">
+          {transactionData?.[0]?.balance}
+        </Descriptions.Item>
+      </Descriptions> */}
+      <Typography.Title
+        level={2}
+        style={{
+          fontWeight: "bold",
+          fontSize: 20,
+          marginBottom: 20,
+        }}
+      >
+        Transaction Info.
+      </Typography.Title>
+      <Table
+        columns={column}
+        rowKey="order_item_id"
+        pagination={false}
+        dataSource={transactionData}
+      ></Table>
     </>
   );
 }

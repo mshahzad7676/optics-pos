@@ -73,14 +73,14 @@ class AdditemDetail extends BaseApi {
         return { success: false, error: "Failed to fetch data from database" };
       }
 
-      console.log("Fetched Data:", data);
+      // console.log("Fetched Data:", data);
       return { success: true, data };
     } catch (error) {
       console.error("Unexpected error while fetching details:", error);
       return { success: false, error: "Unexpected error occurred" };
     }
   }
-  // fetch all data by range filters
+  // fetch all data by rangefilters
   static async fetchAllDetails(selectedRangeFilter) {
     try {
       let query = this.supabase
@@ -103,7 +103,7 @@ class AdditemDetail extends BaseApi {
         return { success: false, error: "Failed to fetch data from database" };
       }
 
-      console.log("Fetched Data:", data);
+      // console.log("Fetched Data:", data);
       return { success: true, data };
     } catch (error) {
       console.error("Unexpected error while fetching details:", error);
@@ -122,7 +122,7 @@ class AdditemDetail extends BaseApi {
         return { success: false, error: "Failed to fetch data from database" };
       }
 
-      console.log("Fetched Data:", data);
+      // console.log("Fetched Data:", data);
       return { success: true, data };
     } catch (error) {
       console.error("Unexpected error while fetching details:", error);
@@ -139,9 +139,17 @@ class AdditemDetail extends BaseApi {
         `
       );
 
-      if (filter) {
-        query = query.eq("range", filter.lensRange);
+      if (filter?.lensType) {
         query = query.eq("glass_type", filter.lensType);
+      }
+      if (filter?.sph) {
+        query = query.eq("sph", filter.sph);
+      }
+      if (filter?.cyl) {
+        query = query.eq("cyl", filter.cyl);
+      }
+      if (filter?.addition) {
+        query = query.eq("addition", filter.addition);
       }
 
       const { data, error } = await query;
@@ -151,11 +159,65 @@ class AdditemDetail extends BaseApi {
         return { success: false, error: "Failed to fetch data from database" };
       }
 
-      console.log("Fetched Data:", data);
+      // console.log("Fetched Data:", data);
       return { success: true, data };
     } catch (error) {
       console.error("Unexpected error while fetching details:", error);
       return { success: false, error: "Unexpected error occurred" };
+    }
+  }
+
+  //fetch filtered data
+  static async fetchFilteredDetails(filters) {
+    try {
+      let query = this.supabase
+        .from("glass_details")
+        .select("*")
+        .order("id", { ascending: true });
+
+      // Apply filters dynamically
+      if (filters?.glassType) {
+        query = query.eq("glass_type", filters.glassType);
+      }
+      if (filters?.sph) {
+        query = query.eq("sph", filters.sph);
+      }
+      if (filters?.cyl) {
+        query = query.eq("cyl", filters.cyl);
+      }
+      if (filters?.addition) {
+        query = query.eq("addition", filters.addition);
+      }
+
+      const { data, error } = await query;
+
+      if (error) {
+        console.error("Error fetching details:", error);
+        return { success: false, error: "Failed to fetch data from database" };
+      }
+
+      // console.log("Fetched Data:", data);
+      return { success: true, data };
+    } catch (error) {
+      console.error("Unexpected error while fetching details:", error);
+      return { success: false, error: "Unexpected error occurred" };
+    }
+  }
+
+  //Update quantity
+  static async updateItemQuantity(updatedQuantity) {
+    try {
+      const { data, error } = await this.supabase
+        .from("glass_details")
+        .update({ held_quantity: updatedQuantity.held_quantity })
+        .eq("id", updatedQuantity.id);
+
+      if (error) {
+        console.log("Quantity updated successfully");
+      }
+      return data;
+    } catch (e) {
+      console.error("Error updating Quantity:", e);
     }
   }
 }

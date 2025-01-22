@@ -29,7 +29,6 @@ function GlassesInventory(params) {
 
   return (
     <>
-      {" "}
       <div
         style={{
           display: "flex",
@@ -38,7 +37,7 @@ function GlassesInventory(params) {
           marginBottom: "10px",
         }}
       >
-        <h2>Glasses Inventory</h2>
+        <h2>Glasses Types</h2>
         <div
           style={{
             gap: "10px",

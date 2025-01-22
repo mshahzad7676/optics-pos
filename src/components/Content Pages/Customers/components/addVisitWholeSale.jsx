@@ -1,48 +1,50 @@
-import React, { useEffect, useState, useContext } from "react";
-import { useParams } from "react-router-dom";
-import { Form, Button, Flex } from "antd";
-import { PlusSquareTwoTone } from "@ant-design/icons";
-import { Content } from "antd/es/layout/layout";
-import OrderItem from "./OrderItem";
-import { useNavigate } from "react-router-dom";
-import OrderApi from "../../../../api/OrderApi";
+import React, { useContext, useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { Form, Button, Row } from "antd";
+
+import TransactionModal from "./transactionModal";
 import { AppContext } from "../../../SideNav";
+
+import OrderApi from "../../../../api/OrderApi";
+import WholeSaleRow from "./wholesaleOrder";
 import TransactionApi from "../../../../api/TransactionApi";
 import { calculateOrderAmount } from "../../../../utils/helpers";
-import TransactionModal from "./transactionModal";
 
-function AddVisitCustomer() {
+function AddVisitWholeSale() {
   const [form] = Form.useForm();
-  const [orderItems, setOrderItems] = useState([{}]);
-  const [hover, setHover] = useState(false);
   const { user, store } = useContext(AppContext);
+  const { customer_id, order_id } = useParams();
+  const [ModalOpen, setModalOpen] = useState(false);
   const [latestTransaction, setLatestTransaction] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [transactionData, setTransactionData] = useState(null);
   const [currentOrderAmount, setCurrentOrderAmount] = useState(0);
 
   const navigate = useNavigate();
-  const { customer_id, order_id } = useParams();
 
   const showModal = () => {
-    setIsModalOpen(true);
+    setModalOpen(true);
   };
+
   // fetch order details for update
   useEffect(() => {
     const fetchOrderDetails = async () => {
       if (order_id) {
         try {
           const data = await OrderApi.fetchOrderItemDetails(order_id);
-
+          console.log(data, "update");
           if (data) {
-            const transformedOrderItems = data.order_items.map((item) => ({
-              order_id: item.order_id,
-              category: item.category,
-              order_item_id: item.order_item_id,
-              ...item.order_item_object,
-            }));
+            const transformedOrderItems = data.order_items.map((item) => {
+              // const glass = item.order_item_object?.glass || {};
+              return {
+                order_id: item.order_id,
+                order_item_id: item.order_item_id,
+                category: item.category,
+                ...item.order_item_object,
+              };
+            });
+            console.log("transformedOrderItems", transformedOrderItems);
+            // Set transformed data to the form
             form.setFieldsValue({ order_items: transformedOrderItems });
-            // setOrderItems(transformedOrderItems);
             const OrderAmount = calculateOrderAmount(transformedOrderItems);
             setCurrentOrderAmount(OrderAmount);
           }
@@ -81,21 +83,15 @@ function AddVisitCustomer() {
     }
   }, [customer_id, store?.s_id]);
 
-  const handleCategoryChange = (value, index) => {
-    const updatedItems = [...orderItems];
-    updatedItems[index].category = value;
-    setOrderItems(updatedItems);
-  };
-
   // Make Transaction
   const orderTransaction = async (orderId, values) => {
     const transcationPayload = {
       order_id: orderId ? parseInt(orderId) : undefined,
       c_id: parseInt(customer_id),
-      // order_items: values.order_items,
       s_id: store?.s_id,
       trans_type: "",
     };
+
     try {
       let totalPrice = calculateOrderAmount(values.order_items);
       totalPrice = totalPrice - currentOrderAmount;
@@ -105,36 +101,41 @@ function AddVisitCustomer() {
       const newBalance = currentBalance + totalPrice;
       transcationPayload.balance = newBalance;
 
+      // Add transaction
       const data = await TransactionApi.addTransaction(transcationPayload);
-      console.log("Transcation created:", data);
+      console.log("Transaction created:", data);
       setTransactionData(data);
       return data;
     } catch (error) {
-      console.error("Error processing Transcation:", error);
+      console.error("Error processing Transaction:", error);
+      throw error;
     }
   };
 
   const onFinish = async (values) => {
     console.log(values, "finish");
+
     const payload = {
       order_id: order_id ? parseInt(order_id) : undefined,
       c_id: parseInt(customer_id),
-      order_items: values.order_items,
+      order_items: values.order_items.map((item) => ({
+        ...item,
+        // category: "Glasses",
+      })),
       s_id: store?.s_id,
     };
+    // console.log("payload -->", payload);
 
     try {
       // First, send the order data to OrderApi
       const data = await OrderApi.addOrder(payload);
       console.log("Order created:", data);
-
       if (data?.orderData?.[0]?.order_id) {
         //Call the orderTranscation
         const transcationResponse = await orderTransaction(
           data.orderData?.[0]?.order_id,
           values
         );
-
         // check on transaction type and show modal
         if (transcationResponse?.data?.[0].trans_type === "Credit") {
           showModal();
@@ -149,92 +150,38 @@ function AddVisitCustomer() {
 
   return (
     <>
-      <Flex
+      <Row
         justify="space-between"
-        align="center"
+        align="middle"
         style={{ marginBottom: "16px" }}
       >
         <h2 style={{ margin: 0 }}>
           {order_id ? "Edit" : "Add"} Customer Visit Details
         </h2>
 
-        <div style={{ gap: "10px", display: "flex", alignItems: "center" }}>
-          <Button
-            type="primary"
-            shape="round-large"
-            onClick={() => {
-              form.submit();
-              // showModal();
-            }}
-          >
-            Save
-          </Button>
-        </div>
+        {/* <Button type="primary" shape="round-large" onClick={handleSave}> */}
+        <Button
+          type="primary"
+          shape="round-large"
+          onClick={() => {
+            form.submit();
+            // showModal();
+          }}
+        >
+          Save
+        </Button>
         <TransactionModal
-          open={isModalOpen}
+          open={ModalOpen}
           store={store}
           latestTransaction={transactionData}
           customer_id={customer_id}
-          onModalClose={() => setIsModalOpen(false)}
+          onModalClose={() => setModalOpen(false)}
         ></TransactionModal>
-      </Flex>
+      </Row>
 
-      <Content>
-        <Form
-          form={form}
-          onFinish={onFinish}
-          initialValues={{ order_items: [{ category: "Eye Wear" }] }}
-        >
-          <Form.List name="order_items">
-            {(orderItems, { add, remove }) => (
-              <>
-                {orderItems.map((orderItem, index) => (
-                  <OrderItem
-                    key={index}
-                    onDelete={() => remove(index)}
-                    form={form}
-                    name={orderItem.name}
-                    orderItem={orderItem}
-                    onFinish={onFinish}
-                    onCategoryChange={(value) =>
-                      handleCategoryChange(value, index)
-                    }
-                    onChange={(data) => {
-                      const updatedItems = [...orderItems];
-                      updatedItems[index] = {
-                        ...updatedItems[index],
-                        ...data,
-                      };
-                      setOrderItems(updatedItems);
-                    }}
-                  />
-                ))}
-                <Flex justify="center">
-                  <Button
-                    variant="filled"
-                    size="middle"
-                    onMouseEnter={() => setHover(true)}
-                    onMouseLeave={() => setHover(false)}
-                    onClick={() => add({ category: "Eye Wear" })}
-                    style={{
-                      color: "#52c41a",
-                      border: 0,
-                      marginTop: 20,
-                      backgroundColor: hover
-                        ? "rgb(82 196 26 / 0.25)"
-                        : "rgb(82 196 26 / 0.15)",
-                    }}
-                  >
-                    <PlusSquareTwoTone twoToneColor="#52c41a" /> Add Section
-                  </Button>
-                </Flex>
-              </>
-            )}
-          </Form.List>
-        </Form>
-      </Content>
+      <WholeSaleRow form={form} onFinish={onFinish}></WholeSaleRow>
     </>
   );
 }
 
-export default AddVisitCustomer;
+export default AddVisitWholeSale;

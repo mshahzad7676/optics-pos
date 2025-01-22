@@ -38,7 +38,11 @@ function OrderTable({ searchTerm }) {
   };
 
   const handleEditVisitClick = (customer_id, order_id) => {
-    navigate(`/customer/${customer_id}/order/${order_id}`);
+    navigate(`/Retail/customer/${customer_id}/order/${order_id}`);
+  };
+
+  const handleEditWSVisitClick = (customer_id, order_id) => {
+    navigate(`/WholeSale/customer/${customer_id}/order/${order_id}`);
   };
 
   const [data, setData] = useState([]);
@@ -49,7 +53,7 @@ function OrderTable({ searchTerm }) {
   // fetch orders
   async function fetchTableOrders(searchTerm) {
     const response = await OrderTableApi.fetchOrders(searchTerm, store.s_id);
-    console.log(response, "order");
+    // console.log(response, "order");
     if (response) {
       const { orders, count } = response;
       setData(orders);
@@ -117,11 +121,11 @@ function OrderTable({ searchTerm }) {
     {
       title: "Order ID",
       dataIndex: "order_id",
-      render: (order_id) => (
-        <Link onClick={() => console.log("Order ID clicked:", order_id)}>
-          {order_id}
-        </Link>
-      ),
+      // render: (order_id) => (
+      //   <Link onClick={() => console.log("Order ID clicked:", order_id)}>
+      //     {order_id}
+      //   </Link>
+      // ),
     },
     {
       title: "Customer Name",
@@ -208,8 +212,13 @@ function OrderTable({ searchTerm }) {
           </Button>
           {/* update */}
           <Button
+            // onClick={() =>
+            //   handleEditVisitClick(record.customers.id, record.order_id)
+            // }
             onClick={() =>
-              handleEditVisitClick(record.customers.id, record.order_id)
+              record.customers.store === "Retail"
+                ? handleEditVisitClick(record.customers.id, record.order_id)
+                : handleEditWSVisitClick(record.customers.id, record.order_id)
             }
             color="primary"
             size="small"

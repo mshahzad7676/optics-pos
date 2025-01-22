@@ -97,7 +97,7 @@ class CustomerAPI extends BaseApi {
       const { error } = await this.supabase
         .from("customers")
         .update(updatedCustomer)
-        .eq("id", updatedCustomer.id); // Assuming id is the unique identifier
+        .eq("id", updatedCustomer.id);
 
       if (error) {
         throw new Error(error.message);

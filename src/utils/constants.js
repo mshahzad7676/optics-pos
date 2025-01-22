@@ -2,21 +2,84 @@ export const baseImageUrl = `https://jphbwllfvhpwixzpjxnd.supabase.co/storage/v1
 
 export const glassItemType = [
   { label: "HC", value: "HC" },
+  { label: "HC 55", value: "HC 55" },
+  { label: "MC", value: "MC" },
+  { label: "MC PC", value: "MC PC" },
+  { label: "MC PG PC", value: "MC PG PC" },
+  { label: "MC Blue", value: "MC Blue" },
+  { label: "MC 1.67", value: "MC 1.67" },
   { label: "BC", value: "BC" },
+  { label: "BC PC", value: "BC PC" },
+  { label: "BC PG-B", value: "BC PG-B" },
+  { label: "BC PG-G", value: "BC PG-G" },
+  { label: "ET", value: "ET" },
+  { label: "MC PG", value: "MC PG" },
+  { label: "MC PB", value: "MC PB" },
+  { label: "WT", value: "WT" },
+  { label: "WT MC", value: "WT MC" },
+  { label: "WT MC PG", value: "WT MC PG" },
+  { label: "PG Glass", value: "PG Glass" },
+  { label: "PB Glass", value: "PB Glass" },
+  { label: "CR 70", value: "CR 70" },
+  { label: "WT KT", value: "WT KT" },
+  { label: "PG KT", value: "PG KT" },
+  { label: "PB KT", value: "PB KT" },
+  { label: "K. WT KT", value: "K. WT KT" },
+  { label: "K. WT KT Ger.", value: "K. WT KT Ger." },
+  { label: "K. PG KT", value: "K. PG KT" },
+  { label: "K. PG KT KT Ger.", value: "K. PG KT KT Ger." },
+  { label: "K. PB KT", value: "K. PB KT" },
+  { label: "K. PB KT KT Ger.", value: "K. PB KT KT Ger." },
+  { label: "K. WT D", value: "K. WT D" },
+  { label: "K. WT D Ger.", value: "K. WT D Ger." },
+  { label: "K. PG D", value: "K. PG D" },
+  { label: "K. PG D Ger.", value: "K. PG D Ger." },
+  { label: "K. PB D", value: "K. PB D" },
+  { label: "K. PB D Ger.", value: "K. PB D Ger." },
+  { label: "HC KT", value: "HC KT" },
+  { label: "MC KT", value: "MC KT" },
+  { label: "BC KT", value: "BC KT" },
+  { label: "MC PG KT", value: "MC PG KT" },
+  { label: "Lab CR KT", value: "Lab CR KT" },
+  { label: "Lab HC KT", value: "Lab HC KT" },
+  { label: "Lab BC KT", value: "Lab BC KT" },
+  { label: "Lab FMC KT", value: "Lab FMC KT" },
+  { label: "Lab FMC PG KT", value: "Lab FMC PG KT" },
+  { label: "Lab FMC PB KT", value: "Lab FMC PB KT" },
+  { label: "Lab DMC KT", value: "Lab DMC KT" },
+  { label: "Lab DMC PG KT", value: "Lab DMC PG KT" },
+  { label: "Lab DMC PB KT", value: "Lab DMC PB KT" },
+  { label: "HC Prog.", value: "HC Prog." },
+  { label: "MC Prog.", value: "MC Prog." },
+  { label: "BC Prog.", value: "BC Prog." },
+  { label: "MC PG Prog.", value: "MC PG Prog." },
+  { label: "Lab CR Prog.", value: "Lab CR Prog." },
+  { label: "Lab HC Prog.", value: "Lab HC Prog." },
+  { label: "Lab BC Prog.", value: "Lab BC Prog." },
+  { label: "Lab FMC Prog.", value: "Lab FMC Prog." },
+  { label: "Lab FMC PG Prog.", value: "Lab FMC PG Prog." },
+  { label: "Lab FMC PB Prog.", value: "Lab FMC PB Prog." },
+  { label: "Lab DMC Prog.", value: "Lab DMC Prog." },
+  { label: "Lab DMC PG Prog.", value: "Lab DMC PG Prog." },
+  { label: "Lab DMC PB Prog.", value: "Lab DMC PB Prog." },
+  { label: "Lab FMC BC PG Prog.", value: "Lab FMC BC PG Prog." },
+  { label: "Lab DMC BC Prog.", value: "Lab DMC BC Prog." },
 ];
 
 export const glassMinusRange = [
+  { label: "Plain to -3.00 Add +1.50", value: "Plain to -3.00 Add +1.50" },
+  { label: "Plain to -3.00 Add +1.25", value: "Plain to -3.00 Add +1.25" },
   { label: "Plain to -3.00 Add +1.00", value: "Plain to -3.00 Add +1.00" },
-  { label: "-2.25 to -4.00 / 2", value: "-2.25 to -4.00 / 2" }, //Group 1-1
-  { label: "Plain to -2.00 / 2", value: "Plain to -2.00 / 2" }, //Group 1-1
-  { label: "-16.25 to -20.00", value: "-16.25 to -20.00" }, //Group 8
-  { label: "-12.25 to -16.00", value: "-12.25 to -16.00" }, //Group 7
-  { label: "-10.25 to -12.00", value: "-10.25 to -12.00" }, //Group 6
-  { label: "-8.25 to -10.00", value: "-8.25 to -10.00" }, //Group 5
-  { label: "-6.25 to -8.00", value: "-6.25 to -8.00" }, //Group 4
-  { label: "-4.25 to -6.00", value: "-4.25 to -6.00" }, //Group 3
-  { label: "-2.25 to -4.00", value: "-2.25 to -4.00" }, //Group 2
-  { label: "Plain to -2.00", value: "Plain to -2.00" }, //Group 1
+  { label: "-2.25 to -4.00 / 2", value: "-2.25 to -4.00 / 2" },
+  { label: "Plain to -2.00 / 2", value: "Plain to -2.00 / 2" },
+  { label: "-16.25 to -20.00", value: "-16.25 to -20.00" },
+  { label: "-12.25 to -16.00", value: "-12.25 to -16.00" },
+  { label: "-10.25 to -12.00", value: "-10.25 to -12.00" },
+  { label: "-8.25 to -10.00", value: "-8.25 to -10.00" },
+  { label: "-6.25 to -8.00", value: "-6.25 to -8.00" },
+  { label: "-4.25 to -6.00", value: "-4.25 to -6.00" },
+  { label: "-2.25 to -4.00", value: "-2.25 to -4.00" },
+  { label: "Plain to -2.00", value: "Plain to -2.00" },
   { label: "All", value: "All" },
   { label: "Plain to +2.00", value: "0.00 to +2.00" },
   { label: "+2.25 to +4.00", value: "+2.25 to +4.00" },
@@ -31,44 +94,3 @@ export const glassMinusRange = [
   { label: "Plain to +3.00 Add +1.25", value: "Plain to +3.00 Add +1.25" },
   { label: "Plain to +3.00 Add +1.50", value: "Plain to +3.00 Add +1.50" },
 ];
-
-const glassRangeAdd = [];
-
-// function createCustomRanges() {
-//   const range = [];
-
-//   // First group: 0.00 to -2.00 (step size of 2.00)
-//   let firstGroup = [];
-//   for (let i = 0.0; i >= -2.0; i -= 0.25) {
-//     firstGroup.push(i.toFixed(2));
-//   }
-//   range.push({
-//     label: `${firstGroup[0]} to ${firstGroup[firstGroup.length - 1]}`,
-//     value: `${firstGroup[0]} to ${firstGroup[firstGroup.length - 1]}`,
-//   });
-
-//   // Second group: -2.25 to 4.00 (step size of 2.25)
-//   let secondGroup = [];
-//   for (let i = -2.25; i >= -4.0; i -= 0.25) {
-//     secondGroup.push(i.toFixed(2));
-//   }
-//   range.push({
-//     label: `${secondGroup[0]} to ${secondGroup[secondGroup.length - 1]}`,
-//     value: `${secondGroup[0]} to ${secondGroup[secondGroup.length - 1]}`,
-//   });
-
-//   // Third group: -18.00 to -20.00 (step size of 0.25)
-//   let thirdGroup = [];
-//   for (let i = -18.0; i >= -20.0; i -= 0.25) {
-//     thirdGroup.push(i.toFixed(2));
-//   }
-//   range.push({
-//     label: `${thirdGroup[0]} to ${thirdGroup[thirdGroup.length - 1]}`,
-//     value: `${thirdGroup[0]} to ${thirdGroup[thirdGroup.length - 1]}`,
-//   });
-
-//   return range;
-// }
-
-// export const rangeData = createCustomRanges();
-// console.log(rangeData);

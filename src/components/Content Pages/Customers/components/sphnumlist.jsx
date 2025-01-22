@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Select } from "antd";
 
-export function SphNumberSelector({ id, value = "0.00", onChange }) {
+export function SphNumberSelector({ id, value = "", onChange }) {
   const [options, setOptions] = useState([]);
 
   // Function to generate numbers from -25.00 to 25.00 with 0.25 steps
@@ -24,14 +24,14 @@ export function SphNumberSelector({ id, value = "0.00", onChange }) {
 
   return (
     <Select
+      allowClear
       showSearch
-      style={{
-        width: 100,
-      }}
-      placeholder="Select Number"
+      // style={{
+      //   width: "auto",
+      // }}
+      placeholder={!value ? "Sph." : undefined}
       optionFilterProp="label"
-      // defaultValue="0.00"
-      value={value}
+      value={value || undefined}
       options={options}
       onChange={(value) => onChange(value)}
     />

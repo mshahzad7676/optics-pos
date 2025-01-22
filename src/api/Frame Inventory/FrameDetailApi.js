@@ -40,7 +40,12 @@ class FrameDetails extends BaseApi {
     }
   }
   // fetch Frames
-  static async fetchFrame(searchTerm = "", s_id) {
+  static async fetchFrame(
+    searchTerm = "",
+    searchShape = "",
+    searchCategory = "",
+    s_id
+  ) {
     try {
       // const { data, error } = await this.supabase
       let query = this.supabase
@@ -49,11 +54,18 @@ class FrameDetails extends BaseApi {
         .eq("s_id", s_id);
 
       if (Boolean(searchTerm)) {
-        //query = query.eq("id", searchTerm); // (`id.ilike.%${searchTerm}%`);
-        query = query.or(
-          `id.eq.${searchTerm},category.ilike.%${searchTerm}%,shape.ilike.%${searchTerm}%`
-        );
+        query = query.eq("id", searchTerm); // (`id.ilike.%${searchTerm}%`);
+        // query = query.or(
+        //   `id.eq.${searchTerm},category.ilike.%${searchCategory}%,shape.ilike.%${searchShape}%`
+        // );
       }
+      if (Boolean(searchCategory)) {
+        query = query.ilike("category", `%${searchCategory}%`);
+      }
+      if (Boolean(searchShape)) {
+        query = query.ilike("shape", `%${searchShape}%`);
+      }
+
       // Excute Query
       const { data, error } = await query;
       if (error) {

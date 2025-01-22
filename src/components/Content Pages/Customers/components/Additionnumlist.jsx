@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Select } from "antd";
 
-function AddtitionNumList({ id, value = "0.00", onChange }) {
+function AddtitionNumList({ id, value = "", onChange }) {
   const [options, setOptions] = useState([]);
 
   // Function to generate numbers from 0.00 to 3.00 with 0.25 steps
@@ -24,13 +24,15 @@ function AddtitionNumList({ id, value = "0.00", onChange }) {
 
   return (
     <Select
+      allowClear
       showSearch
-      style={{
-        width: 100,
-      }}
-      placeholder="Select Number"
+      // style={{
+      //   width: 100,
+      // }}
+      placeholder={!value ? "Add." : undefined}
       optionFilterProp="label"
-      value={value}
+      value={value || undefined}
+      // defaultValue={0.0}
       options={options}
       onChange={(value) => onChange(value)}
     />

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Table, Button, Modal } from "antd";
+import { Table, Button, Modal, Flex, Typography, Tag } from "antd";
 import {
   DeleteOutlined,
   EditOutlined,
@@ -16,7 +16,10 @@ function CustomerTable({ searchTerm }) {
   const navigate = useNavigate();
 
   const handleAddVisitClick = (id) => {
-    navigate(`/customer/${id}/order/`);
+    navigate(`/Retail/Customer/${id}/order/`);
+  };
+  const handleAddVisitWholeSaleClick = (id) => {
+    navigate(`/Wholesale/Customer/${id}/order/`);
   };
 
   const [isEditModalOpen, setisEditModalOpen] = useState(false);
@@ -104,13 +107,35 @@ function CustomerTable({ searchTerm }) {
       dataIndex: "city",
     },
     {
-      title: "Last Visit",
-      dataIndex: "last_visit_date",
+      title: "Visit Records",
+      render: (_, record) => (
+        <Flex vertical align="start" justify="start">
+          <Typography.Text style={{ fontSize: "12px" }}>
+            <strong>Last Visit: </strong>
+            {record.last_visit_date}
+          </Typography.Text>
+          <Typography.Text style={{ fontSize: "12px" }}>
+            <strong>Total Visits: </strong>
+            {record.total_visits}
+          </Typography.Text>
+        </Flex>
+      ),
     },
+    // {
+    //   title: "Total Visits",
+    //   dataIndex: "total_visits",
+    // },
+
     {
-      title: "Total Visits",
-      dataIndex: "total_visits",
+      title: "Customer of",
+      dataIndex: "store",
+      render: (_, record) => (
+        <Tag color={record.store === "Retail" ? "green" : "blue"}>
+          {record.store}
+        </Tag>
+      ),
     },
+
     {
       title: "Actions",
       dataIndex: "actions",
@@ -136,7 +161,11 @@ function CustomerTable({ searchTerm }) {
             color="primary"
             variant="filled"
             size="small"
-            onClick={() => handleAddVisitClick(record.id)}
+            onClick={() =>
+              record.store === "Retail"
+                ? handleAddVisitClick(record.id)
+                : handleAddVisitWholeSaleClick(record.id)
+            }
           >
             <PlusSquareTwoTone twoToneColor="#52c41a" />
           </Button>

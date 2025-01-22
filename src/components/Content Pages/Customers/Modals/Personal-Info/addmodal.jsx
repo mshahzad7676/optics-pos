@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Modal, Form, Input, Row, Col } from "antd";
+import { Modal, Form, Input, Row, Col, Select } from "antd";
 import CustomerAPI from "../../../../../api/CustomerApi";
 import { AppContext } from "../../../../SideNav";
 
@@ -31,7 +31,8 @@ function AddCustomer({ open, onModalClose, setFormData }) {
       <Modal
         title="Add Customer"
         open={open}
-        onOk={handleFormSubmit}
+        // onOk={handleFormSubmit}
+        onOk={() => form.submit()}
         onCancel={closeModal}
       >
         <Form
@@ -80,6 +81,23 @@ function AddCustomer({ open, onModalClose, setFormData }) {
                 ]}
               >
                 <Input placeholder="Enter Email" />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                label="Customer of"
+                name="store"
+                rules={[{ required: true, message: "Please Select Store" }]}
+              >
+                <Select
+                  showSearch
+                  placeholder="Select Store Type"
+                  optionFilterProp="label"
+                  options={[
+                    { value: "Retail", label: "Retail" },
+                    { value: "Whole Sale", label: "Whole Sale" },
+                  ]}
+                />
               </Form.Item>
             </Col>
 

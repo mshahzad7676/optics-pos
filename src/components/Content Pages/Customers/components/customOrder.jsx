@@ -22,10 +22,7 @@ function CustomOrder({ form, key, onFinish, name }) {
           <Form.Item
             label="Lense Type"
             name={[name, "custom", "type"]}
-
-            // rules={[
-            //   { required: true, message: "Please Select the Frame Type" },
-            // ]}
+            rules={[{ required: true, message: "Please Select Lense Type" }]}
           >
             <Select
               allowClear

@@ -61,7 +61,7 @@ function Customers() {
             shape="round-large"
             icon={<PlusCircleOutlined />}
           >
-            Add Record
+            Add Customer
           </Button>
           <AddCustomer
             open={isModalOpen}

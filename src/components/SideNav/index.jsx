@@ -45,7 +45,9 @@ import Employee from "../Content Pages/Employees";
 import MemberApi from "../../api/Member/MemberApi";
 import MemberStores from "../Content Pages/Employees/Member Stores";
 import CreateStore from "../Content Pages/E-Store/Modal/createStoreModal";
-import OrderTranscations from "../Content Pages/Billing";
+import OrderTransactions from "../Content Pages/Billing";
+import InventoryFilter from "../Content Pages/Inventory/components/Glasses Inventory/inventoryFilter";
+import AddVisitWholeSale from "../Content Pages/Customers/components/addVisitWholeSale";
 
 const { Header, Sider, Content } = Layout;
 
@@ -270,6 +272,9 @@ function MainPage({ onLogout, password, setPassword }) {
                 <Menu.Item key="3-2">
                   <Link to="/glasses">Glasses</Link>
                 </Menu.Item>
+                <Menu.Item key="3-3">
+                  <Link to="/inventoryfilter">Inventory Filter</Link>
+                </Menu.Item>
               </Menu.SubMenu>
               <Menu.Item key="4" icon={<ShoppingOutlined />}>
                 <Link to="/estore">E-Store</Link>
@@ -394,6 +399,7 @@ function MainPage({ onLogout, password, setPassword }) {
                 <Route path="/store/:s_id" element={<Customers />} />
                 <Route path="/frames" element={<FramesInventory />} />
                 <Route path="/glasses" element={<GlassesInventory />} />
+                <Route path="/inventoryfilter" element={<InventoryFilter />} />
                 {/* <Route path="/contactlense" element={<ContactLenseInventory />} /> */}
                 <Route path="/estore" element={<Estore />} />
                 <Route path="/employee" element={<Employee></Employee>}></Route>
@@ -401,7 +407,7 @@ function MainPage({ onLogout, password, setPassword }) {
                 <Route path="/profile" element={<Profile></Profile>} />
                 <Route
                   path="/billing"
-                  element={<OrderTranscations></OrderTranscations>}
+                  element={<OrderTransactions></OrderTransactions>}
                 />
                 <Route
                   path="/setting"
@@ -421,9 +427,14 @@ function MainPage({ onLogout, password, setPassword }) {
                   element={<ViewVisitedHistory></ViewVisitedHistory>}
                 /> */}
                 <Route
-                  path="/customer/:customer_id/order/:order_id?"
+                  path="/Retail/Customer/:customer_id/order/:order_id?"
                   element={<Addvisitcustomer></Addvisitcustomer>}
                 ></Route>
+                <Route
+                  path="/Wholesale/Customer/:customer_id/order/:order_id?"
+                  element={<AddVisitWholeSale></AddVisitWholeSale>}
+                ></Route>
+
                 {/* <Route
                   path="/editvisitcustomer/:order_id"
                   element={<Addvisitcustomer></Addvisitcustomer>}
@@ -432,10 +443,10 @@ function MainPage({ onLogout, password, setPassword }) {
                   path="/orderdetails/:order_id"
                   element={<OrderDetails></OrderDetails>}
                 ></Route>
-                <Route
-                  path="/orderdetails"
+                {/* <Route
+                  path="/orderdetails/:order_id"
                   element={<OrderDetails></OrderDetails>}
-                ></Route>
+                ></Route> */}
                 <Route
                   path="/addItemsDetails/:glass_type_id/:glass_type"
                   element={<AddItemDetails></AddItemDetails>}

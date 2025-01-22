@@ -80,6 +80,8 @@ function GlassesInfo({ form, key, onFinish, name, glassTypes }) {
     form.setFieldValue(["order_items", name, "glass", "quantity"], null);
   };
 
+  const lensType = Form.useWatch(["order_items", name, "glass", "type"], form);
+
   const selectedSph = Form.useWatch(
     ["order_items", name, "glass", "sph"],
     form
@@ -95,6 +97,9 @@ function GlassesInfo({ form, key, onFinish, name, glassTypes }) {
     form
   );
 
+  useEffect(() => {
+    handleLensTypeChange(lensType);
+  }, [lensType]);
   // const handleQuantityChange = (e) => {
   //   const quantity = parseFloat(e.target.value) || 0;
   //   const unitPrice = parseFloat(itemData?.[0]?.price) || 0;
@@ -118,6 +123,7 @@ function GlassesInfo({ form, key, onFinish, name, glassTypes }) {
     // console.log(updatedQuantity, "qqq");
     updateInventoryObject(updatedQuantity);
   };
+
   const updateInventoryObject = (updatedQuantity) => {
     const lensItem =
       itemQuantityMap[
@@ -147,7 +153,11 @@ function GlassesInfo({ form, key, onFinish, name, glassTypes }) {
       <div className="eyewear-info-container" style={{ padding: "0px 10px" }}>
         {/* Lens Type */}
         <Col span={6}>
-          <Form.Item label="Lens Type" name={[name, "glass", "type"]}>
+          <Form.Item
+            label="Lens Type"
+            name={[name, "glass", "type"]}
+            rules={[{ required: true, message: "Please Select Lense Type" }]}
+          >
             <Select
               allowClear
               showSearch
@@ -157,7 +167,7 @@ function GlassesInfo({ form, key, onFinish, name, glassTypes }) {
                 label: type.name,
                 value: type.name,
               }))}
-              onChange={handleLensTypeChange}
+              // onChange={handleLensTypeChange}
             />
           </Form.Item>
         </Col>
@@ -166,7 +176,13 @@ function GlassesInfo({ form, key, onFinish, name, glassTypes }) {
           <Row gutter={16}>
             {/* Lens Range */}
             <Col span={7}>
-              <Form.Item label="Lens Range" name={[name, "glass", "range"]}>
+              <Form.Item
+                label="Lens Range"
+                name={[name, "glass", "range"]}
+                rules={[
+                  { required: true, message: "Please Select Lense Range" },
+                ]}
+              >
                 <Select
                   allowClear
                   showSearch
@@ -180,7 +196,11 @@ function GlassesInfo({ form, key, onFinish, name, glassTypes }) {
 
             {/* Sph Number */}
             <Col span={3}>
-              <Form.Item label="Sph" name={[name, "glass", "sph"]}>
+              <Form.Item
+                label="Sph"
+                name={[name, "glass", "sph"]}
+                rules={[{ required: true, message: "Please Select Sph" }]}
+              >
                 <Select
                   allowClear
                   showSearch
@@ -197,7 +217,11 @@ function GlassesInfo({ form, key, onFinish, name, glassTypes }) {
             {/* Cyl Number */}
             {cylList.length > 0 && (
               <Col span={3}>
-                <Form.Item label="Cyl" name={[name, "glass", "cyl"]}>
+                <Form.Item
+                  label="Cyl"
+                  name={[name, "glass", "cyl"]}
+                  rules={[{ required: true, message: "Please Select Cyl." }]}
+                >
                   <Select
                     allowClear
                     showSearch
@@ -215,7 +239,11 @@ function GlassesInfo({ form, key, onFinish, name, glassTypes }) {
             {/* Addition Number */}
             {addList.length > 0 && (
               <Col span={3}>
-                <Form.Item label="Add" name={[name, "glass", "addition"]}>
+                <Form.Item
+                  label="Add"
+                  name={[name, "glass", "addition"]}
+                  rules={[{ required: true, message: "Please Select Add." }]}
+                >
                   <Select
                     allowClear
                     showSearch
@@ -236,6 +264,7 @@ function GlassesInfo({ form, key, onFinish, name, glassTypes }) {
                 label="Quantity"
                 style={{ marginBottom: 0 }}
                 name={[name, "glass", "quantity"]}
+                rules={[{ required: true, message: "Please Enter Quantity" }]}
               >
                 <Input
                   type="number"
@@ -251,16 +280,6 @@ function GlassesInfo({ form, key, onFinish, name, glassTypes }) {
                 {itemQuantityMap[
                   `${selectedSph}/${selectedCyl ?? null}/${selectedAdd ?? null}`
                 ]?.held_quantity ?? 0}
-              </Typography.Text>
-              <br></br>
-              <Typography.Text style={{ fontSize: "12px" }}>
-                <strong>Updated Quantity: </strong>
-                {form.getFieldValue([
-                  "order_items",
-                  name,
-                  "glass",
-                  "updatedQuantity",
-                ]) ?? 0}
               </Typography.Text>
             </Col>
 

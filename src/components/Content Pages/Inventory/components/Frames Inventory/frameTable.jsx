@@ -12,7 +12,7 @@ import FrameDetails from "../../../../../api/Frame Inventory/FrameDetailApi";
 import { AppContext } from "../../../../SideNav";
 import { baseImageUrl } from "../../../../../utils/constants";
 
-function FrameTable({ searchTerm }) {
+function FrameTable({ searchTerm, searchCategory, searchShape }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedFrame, setSelectedFrame] = useState(null);
   const [data, setData] = useState([]);
@@ -28,22 +28,35 @@ function FrameTable({ searchTerm }) {
     setIsModalOpen(false);
   };
 
-  async function fetchFrame(searchTerm) {
+  async function fetchFrame(searchTerm, searchCategory, searchShape) {
     try {
-      const frames = await FrameDetails.fetchFrame(searchTerm, store.s_id);
+      const frames = await FrameDetails.fetchFrame(
+        searchTerm,
+        searchCategory,
+        searchShape,
+        store.s_id
+      );
 
       if (frames) {
         setData(frames);
+      } else {
+        setData([]);
       }
     } catch (error) {
       console.error("Failed to fetch Frames:", error);
+      setData([]);
     }
   }
+
   useEffect(() => {
-    if (store?.s_id) {
-      fetchFrame(searchTerm);
-    }
-  }, [searchTerm, store?.s_id]);
+    const fetchData = async () => {
+      if (store?.s_id) {
+        await fetchFrame(searchTerm, searchCategory, searchShape);
+      }
+    };
+
+    fetchData();
+  }, [searchTerm, searchCategory, searchShape, store?.s_id]);
 
   const { confirm } = Modal;
   const showDeleteConfirm = (frameid) => {

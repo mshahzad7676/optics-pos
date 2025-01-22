@@ -85,12 +85,12 @@ function AddFrameModal({ frameData, open, onModalClose, store }) {
               <Form.Item
                 label="Frame Picture"
                 name="pic"
-                // rules={[
-                //   {
-                //     required: true,
-                //     message: "Please upload the frame picture",
-                //   },
-                // ]}
+                rules={[
+                  {
+                    required: true,
+                    message: "Please upload the frame picture",
+                  },
+                ]}
               >
                 <Upload
                   beforeUpload={(file) => {
@@ -104,7 +104,16 @@ function AddFrameModal({ frameData, open, onModalClose, store }) {
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="Frame Category" name="category">
+              <Form.Item
+                label="Frame Category"
+                name="category"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please Select Frame Category",
+                  },
+                ]}
+              >
                 <Select
                   showSearch
                   placeholder="Select Frame Category"
@@ -123,7 +132,16 @@ function AddFrameModal({ frameData, open, onModalClose, store }) {
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="Frame Shape" name="shape">
+              <Form.Item
+                label="Frame Shape"
+                name="shape"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please Select Frame Shape",
+                  },
+                ]}
+              >
                 <Select
                   showSearch
                   placeholder="Select Frame Shape"
@@ -141,12 +159,30 @@ function AddFrameModal({ frameData, open, onModalClose, store }) {
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="Brand" name="brand">
+              <Form.Item
+                label="Brand"
+                name="brand"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please Select Frame Brand",
+                  },
+                ]}
+              >
                 <Input placeholder="Enter Brand Name" />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="Quantity" name="quantity">
+              <Form.Item
+                label="Quantity"
+                name="quantity"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please Select Frame Quantity",
+                  },
+                ]}
+              >
                 <InputNumber
                   min={1}
                   max={100}
@@ -158,7 +194,16 @@ function AddFrameModal({ frameData, open, onModalClose, store }) {
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="Price" name="price">
+              <Form.Item
+                label="Price"
+                name="price"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please Select Frame Price",
+                  },
+                ]}
+              >
                 <Input type="number" placeholder="Enter Price" />
               </Form.Item>
             </Col>

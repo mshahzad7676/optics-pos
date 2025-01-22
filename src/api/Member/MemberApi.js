@@ -63,10 +63,16 @@ class MemberApi extends BaseAdminApi {
     try {
       let query = this.supabase.from("members").select("*").eq("s_id", s_id);
 
+      // if (Boolean(searchTerm)) {
+      //   query = query.eq("id", searchTerm); // (`id.ilike.%${searchTerm}%`);
+      //   // query = query.or(`id.eq.${searchTerm},name.ilike.%${searchTerm}%`);
+      // }
       if (Boolean(searchTerm)) {
-        query = query.eq("id", searchTerm); // (`id.ilike.%${searchTerm}%`);
-        // query = query.or(`id.eq.${searchTerm},name.ilike.%${searchTerm}%`);
+        query = query.or(
+          `name.ilike.%${searchTerm}%,phone.ilike.%${searchTerm}%`
+        );
       }
+
       // Excute Query
       const { data, error } = await query;
       if (error) {

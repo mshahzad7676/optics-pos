@@ -15,6 +15,7 @@ import SetNewPassword from "./Auth/SetPassword";
 import AuthServieApi from "./api/AuthApi";
 import UserInfo from "./Auth/SignUp/userInfo";
 import MemberStores from "./components/Content Pages/Employees/Member Stores";
+import StoreInfo from "./Auth/SignUp/storeInfo";
 
 // Protected route wrapper
 function ProtectedRoute({ isAuthenticated, children }) {
@@ -153,7 +154,7 @@ function App() {
         path="/userInfo/:userId"
         element={<UserInfo updateMember={handleUpdateMember}></UserInfo>}
       ></Route>
-      {/* <Route path="/storeInfo" element={<StoreInfo></StoreInfo>}></Route> */}
+      <Route path="/storeInfo" element={<StoreInfo></StoreInfo>}></Route>
 
       <Route path="/forgetpassword" element={<ResetPassword />} />
       <Route path="/SetNewPassword" element={<SetNewPassword />} />

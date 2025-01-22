@@ -19,7 +19,7 @@ class GlassTypeApi extends BaseApi {
       console.error("Error creating customer:", e);
     }
   }
-  // fetch GlassItems
+  // fetch GlassItems details
   static async fetchGlassType(searchTerm = "", s_id) {
     try {
       // const { data, error } = await this.supabase

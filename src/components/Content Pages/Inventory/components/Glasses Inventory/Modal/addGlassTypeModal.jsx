@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
-import { Modal, Form, Input, Row, Col } from "antd";
+import { Modal, Form, Input, Row, Col, Select } from "antd";
 import GlassTypeApi from "../../../../../../api/Glasses Inventory/GlassTypeApi";
+import { glassItemType } from "../../../../../../utils/constants";
 
 function AddGlassTypeModal({ itemData, open, onModalClose, store }) {
   const [form] = Form.useForm();
@@ -40,7 +41,10 @@ function AddGlassTypeModal({ itemData, open, onModalClose, store }) {
         open={open}
         // onOk={onModalClose}
         onOk={() => form.submit()}
-        onCancel={onModalClose}
+        onCancel={() => {
+          onModalClose();
+          form.resetFields();
+        }}
       >
         <Form
           onFinish={handleAdditem}
@@ -50,20 +54,35 @@ function AddGlassTypeModal({ itemData, open, onModalClose, store }) {
         >
           <Row gutter={16}>
             <Col span={12}>
-              <Form.Item label="Item Name" name="name">
-                <Input
+              <Form.Item
+                label="Item Name"
+                name="name"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please Enter the Item Name",
+                  },
+                ]}
+              >
+                {/* <Input
                   showSearch
                   placeholder="Enter Item Name"
-                  // rules={[
-                  //     {
-                  //       required: true,
-                  //       message: "Please Enter the Item Name",
-                  //     },
-                  //   ]}
                   style={{
                     fontSize: "14px",
                     width: 210,
                   }}
+                /> */}
+                <Select
+                  allowClear
+                  showSearch
+                  placeholder="Select Item Name"
+                  optionFilterProp="label"
+                  style={{ marginBottom: "10px", width: 300 }}
+                  // onChange={(value) => {
+                  //   console.log("selected customer:", value);
+                  //   setSelectedCustomer(value);
+                  // }}
+                  options={glassItemType}
                 />
               </Form.Item>
             </Col>

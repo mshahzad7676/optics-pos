@@ -18,6 +18,8 @@ function FramesInventory(params) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { user, store } = useContext(AppContext);
   const [searchTerm, setSearchTerm] = useState("");
+  const [searchCategory, setSearchCategory] = useState("");
+  const [searchShape, setSearchShape] = useState("");
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -25,6 +27,14 @@ function FramesInventory(params) {
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
+  };
+
+  const handleCategoryChange = (e) => {
+    setSearchCategory(e.target.value);
+  };
+
+  const handleShapeChange = (e) => {
+    setSearchShape(e.target.value);
   };
 
   return (
@@ -68,7 +78,7 @@ function FramesInventory(params) {
         </Col>
         <Col>
           <Input
-            onChange={handleSearchChange}
+            onChange={handleCategoryChange}
             placeholder="Search Frame Category"
             suffix={suffix}
             style={{
@@ -79,7 +89,7 @@ function FramesInventory(params) {
         </Col>
         <Col>
           <Input
-            onChange={handleSearchChange}
+            onChange={handleShapeChange}
             placeholder="Search Frame Shape"
             suffix={suffix}
             style={{
@@ -95,7 +105,11 @@ function FramesInventory(params) {
         </Col> */}
       </Row>
       <br></br>
-      <FrameTable searchTerm={searchTerm}></FrameTable>
+      <FrameTable
+        searchTerm={searchTerm}
+        searchCategory={searchCategory}
+        searchShape={searchShape}
+      ></FrameTable>
     </>
   );
 }
