@@ -110,23 +110,6 @@ function WholeSaleRow({ key, orderItem, addRow, name, form, onDelete }) {
         );
       }
 
-      // if (matchedItem) {
-      //   // Update the quantity of the originalInventoryItem
-      //   const updatedQuantity =
-      //     matchedItem.held_quantity + (order_items?.glass?.quantity || 0);
-
-      //   // Set originalInventoryItem in the form
-      //   form.setFieldValue(["order_items", name, "originalInventoryItem"], {
-      //     ...matchedItem,
-      //     held_quantity: updatedQuantity,
-      //   });
-      // } else {
-      //   // Clear the originalInventoryItem if no match is found
-      //   // form.setFieldValue(
-      //   //   ["order_items", name, "glass", "originalInventoryItem", "quantity"],
-      //   //   0
-      //   // );
-      // }
       fetchData();
     }
   }, [selectedLensType, selectedSph, selectedCyl, selectedAdd]);

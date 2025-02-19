@@ -10,7 +10,14 @@ import GlassTypeApi from "../../../../api/Glasses Inventory/GlassTypeApi";
 import { AppContext } from "../../../SideNav";
 import GlassesInfoNew from "./glassesInfoNew";
 
-export default function OrderItem({ onDelete, onFinish, form, name, key }) {
+export default function OrderItem({
+  onDelete,
+  onFinish,
+  form,
+  name,
+  key,
+  orderItem,
+}) {
   const selectedCategory = Form.useWatch(
     ["order_items", name, "category"],
     form
@@ -97,7 +104,13 @@ export default function OrderItem({ onDelete, onFinish, form, name, key }) {
       </Row>
 
       {selectedCategory === "Eye Wear" || selectedCategory === "Sun Glasses" ? (
-        <EyewearInfo key={key} onFinish={onFinish} form={form} name={name} />
+        <EyewearInfo
+          key={key}
+          onFinish={onFinish}
+          form={form}
+          name={name}
+          orderItem={orderItem}
+        />
       ) : selectedCategory === "Contact Lense" ? (
         <ContactLenseInfo
           form={form}

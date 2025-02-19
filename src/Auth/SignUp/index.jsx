@@ -18,6 +18,7 @@ function SignUp({ email, setEmail, password, setPassword, onSignUp }) {
     if (success) {
       // If sign-up is successful, navigate to login page
       navigate(`/userInfo/${data?.member?.id}`);
+      // navigate(`/userInfo/`);
     }
   };
   return (
@@ -29,7 +30,14 @@ function SignUp({ email, setEmail, password, setPassword, onSignUp }) {
         </Title>
         <Form layout="vertical" onFinish={handleSignUpFinish}>
           {/* Email */}
-          <Form.Item label="Email Address" name="email">
+          <Form.Item
+            label="Email"
+            name="email"
+            // rules={[
+            //   { required: true, message: "Please enter your email address!" },
+            //   { type: "email", message: "Enter a valid email address!" },
+            // ]}
+          >
             <Input
               prefix={<MailOutlined />}
               placeholder="Username@gmail.com"
@@ -40,7 +48,14 @@ function SignUp({ email, setEmail, password, setPassword, onSignUp }) {
           </Form.Item>
 
           {/* Password */}
-          <Form.Item label="Password" name="password">
+          <Form.Item
+            label="Password"
+            name="password"
+            // rules={[
+            //   { required: true, message: "Please Enter Your Password!" },
+            //   { type: "password", message: "Enter a valid Password" },
+            // ]}
+          >
             <Input
               prefix={<LockOutlined />}
               type={passwordVisible ? "text" : "password"}

@@ -7,6 +7,8 @@ class OrderApi extends BaseApi {
 
     const updatedInventoryList = [];
     const orginalInventoryList = [];
+    const updatedFrameInventoryList = [];
+    const orginalFrameInventoryList = [];
 
     // Calculate total price
     if (Array.isArray(payload.order_items)) {
@@ -32,6 +34,13 @@ class OrderApi extends BaseApi {
         }
         if (item.originalInventoryItem) {
           orginalInventoryList.push(item.originalInventoryItem);
+        }
+
+        if (item.updatedframeInventory) {
+          updatedFrameInventoryList.push(item.updatedframeInventory);
+        }
+        if (item.originalFrameInventoryItem) {
+          orginalFrameInventoryList.push(item.originalFrameInventoryItem);
         }
       });
     }
@@ -96,6 +105,38 @@ class OrderApi extends BaseApi {
 
       console.log("Upsert into 'order_items' response:", itemData);
 
+      //  frames inventory
+      if (updatedFrameInventoryList.length) {
+        // Upsert into the frame_details table
+        const { data: frameData, error: frameError } = await this.supabase
+          .from("frame_details")
+          .upsert(updatedFrameInventoryList, { onConflict: ["id"] })
+          .select();
+
+        if (frameError) {
+          console.error("Error upserting into 'frame_details':", frameError);
+          return;
+        }
+
+        console.log("Upsert into 'frame_details' response:", frameData);
+      }
+
+      if (orginalFrameInventoryList.length) {
+        // Upsert into the frame_details table
+        const { data: frameData, error: frameError } = await this.supabase
+          .from("frame_details")
+          .upsert(orginalFrameInventoryList, { onConflict: ["id"] })
+          .select();
+
+        if (frameError) {
+          console.error("Error upserting into 'frame_details':", frameError);
+          return;
+        }
+
+        console.log("Upsert into 'frame_details' response:", frameData);
+      }
+
+      // Glass inventory
       if (updatedInventoryList.length) {
         // Upsert into the glass_details table
         const { data: glassData, error: glassError } = await this.supabase
@@ -110,6 +151,7 @@ class OrderApi extends BaseApi {
 
         console.log("Upsert into 'glass_details' response:", glassData);
       }
+
       if (orginalInventoryList.length) {
         // Upsert into the glass_details table
         const { data: glassData, error: glassError } = await this.supabase
@@ -124,19 +166,6 @@ class OrderApi extends BaseApi {
 
         console.log("Upsert into 'glass_details' response:", glassData);
       }
-
-      //create transcation
-      // try {
-      //   const transactionResponse = await TransactionApi.addTransaction({
-      //     order_id: orderId,
-      //     balance: balance,
-      //   });
-
-      //   console.log("Transaction created successfully:", transactionResponse);
-      // } catch (transactionError) {
-      //   console.error("Error creating transaction:", transactionError);
-      //   return;
-      // }
 
       return { orderData: data, orderItemsData: itemData };
     } catch (e) {

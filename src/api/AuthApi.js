@@ -22,6 +22,7 @@ class AuthServieApi extends BaseApi {
           name: email,
           description: storeDescription,
           u_id: userId,
+          // type: "Retail & Wholesale",
         })
         .select()
         .single();
@@ -53,18 +54,41 @@ class AuthServieApi extends BaseApi {
       return { data: null, error };
     }
   }
+
   // update UserInfo
   static async updateMember(memberData) {
     try {
-      const { error } = await this.supabase
+      const { data, error } = await this.supabase
         .from("members")
         .update(memberData)
-        .eq("id", memberData.id);
+        .eq("id", memberData.id)
+        .select();
+
       if (error) {
         throw new Error(error.message);
       }
+
+      return { data, error: null };
     } catch (e) {
-      console.error("Error updating customer:", e);
+      console.error("Error updating member:", e);
+      return { data: null, error: e };
+    }
+  }
+  //Update StoreInfo
+  static async updateStore(storeData) {
+    try {
+      const { data, error } = await this.supabase
+        .from("e_store")
+        .update(storeData)
+        .eq("u_id", storeData.u_id)
+        .select();
+      if (error) {
+        throw new Error(error.message);
+      }
+      return { data, error: null };
+    } catch (e) {
+      console.error("Error updating Store:", e);
+      return { data: null, error: e };
     }
   }
 

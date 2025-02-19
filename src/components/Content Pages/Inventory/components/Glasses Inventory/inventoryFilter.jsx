@@ -62,6 +62,7 @@ function InventoryFilter() {
       cyl: normalizeValue(searchCyl),
       addition: normalizeValue(searchAdd),
     };
+    console.log(filters);
 
     try {
       const { data } = await AdditemDetail.fetchFilteredDetails(filters);

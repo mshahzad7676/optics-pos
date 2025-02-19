@@ -38,11 +38,11 @@ function OrderTable({ searchTerm }) {
   };
 
   const handleEditVisitClick = (customer_id, order_id) => {
-    navigate(`/Retail/customer/${customer_id}/order/${order_id}`);
+    navigate(`/retail/customer/${customer_id}/order/${order_id}`);
   };
 
   const handleEditWSVisitClick = (customer_id, order_id) => {
-    navigate(`/WholeSale/customer/${customer_id}/order/${order_id}`);
+    navigate(`/wholeSale/customer/${customer_id}/order/${order_id}`);
   };
 
   const [data, setData] = useState([]);

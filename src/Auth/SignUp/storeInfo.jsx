@@ -6,51 +6,76 @@ import {
   EyeOutlined,
   PhoneOutlined,
   UserOutlined,
+  BranchesOutlined,
+  ShoppingCartOutlined,
 } from "@ant-design/icons";
 import "../Login/login.css";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 const { Title } = Typography;
 
-function StoreInfo({ email, setEmail, password, setPassword, onSignUp }) {
-  const [passwordVisible, setPasswordVisible] = useState(false);
+function StoreInfo({ updateStore }) {
   const navigate = useNavigate();
+  const [form] = Form.useForm();
+  const { userId } = useParams();
 
+  // skip to Login
   const handleLogin = () => {
-    navigate(`/login`);
+    // navigate(`/`);
+    navigate(`/memberstores`);
   };
 
   const handleSignUpFinish = async () => {
-    // Trigger the sign-up process
-    // const success = await onSignUp();
-    // if (success) {
-    // If sign-up is successful, navigate to login page
-    navigate(`/login`);
-    // }
+    try {
+      const values = await form.validateFields();
+      const { success, data } = await updateStore({
+        name: values.name,
+        city: values.city,
+        type: values.type,
+        u_id: userId,
+      });
+      console.log(data, "res");
+      if (success) {
+        // navigate(`/`);
+        navigate(`/memberstores`);
+      }
+    } catch (error) {
+      console.error("Error updating member:", error);
+    }
   };
   return (
     <div className="container">
       <div className="screen-1">
         {/* Form */}
         <Title level={3} style={{ textAlign: "center", marginBottom: "1em" }}>
-          Store Infomation
+          Shop Infomation
         </Title>
-        <Form layout="vertical" onFinish={handleSignUpFinish}>
+        {/* <Form layout="vertical" onFinish={handleSignUpFinish}> */}
+        <Form layout="vertical" form={form}>
           {/* Store Name */}
-          <Form.Item label="Store Name" name="name">
+          <Form.Item label="Shop Name" name="name">
             <Input
-              prefix={<UserOutlined />}
+              prefix={<ShoppingCartOutlined />}
               placeholder="Optical Complex"
-              type="name"
+              type="text"
               // value={name}
-              onChange={(e) => setEmail(e.target.value)}
+              // onChange={(e) => setEmail(e.target.value)}
+            />
+          </Form.Item>
+          <Form.Item label="Place of Shop" name="city">
+            <Input
+              prefix={<BranchesOutlined />}
+              placeholder="Saddar-Rwp"
+              type="text"
+              // value={name}
             />
           </Form.Item>
 
           {/*  */}
-          <Form.Item label="Store Type" name="type">
+          <Form.Item label="Shop Type" name="type">
             <Select
               // style={{ width: 120 }}
-              placeholder="Enter Store Type"
+              placeholder="Enter Shop Type"
+              defaultValue={"Retail & Wholesale"}
               options={[
                 { value: "Retail", label: "Retail" },
                 { value: "Wholesale", label: "Wholesale" },
@@ -59,16 +84,29 @@ function StoreInfo({ email, setEmail, password, setPassword, onSignUp }) {
             />
           </Form.Item>
 
-          {/* Next to store  */}
+          {/* Next to Login  */}
           <Form.Item>
             <Button
               type="primary"
               htmlType="submit"
               className="login-btn"
               block
-              onClick={handleLogin}
+              onClick={handleSignUpFinish}
             >
               Next
+            </Button>
+          </Form.Item>
+
+          {/* Skip Shop info */}
+          <Form.Item>
+            <Button
+              type="primary"
+              htmlType="button"
+              className="login-btn"
+              block
+              onClick={handleLogin}
+            >
+              Skip
             </Button>
           </Form.Item>
         </Form>

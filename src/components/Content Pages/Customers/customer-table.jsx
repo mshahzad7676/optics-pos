@@ -91,7 +91,7 @@ function CustomerTable({ searchTerm }) {
 
   const columns = [
     {
-      title: "User ID",
+      title: "ID",
       dataIndex: "id",
     },
     {

@@ -11,7 +11,7 @@ function OrderDetails() {
   const [customerData, setCustomerData] = useState([]);
   const [orderData, setOrderData] = useState([]);
   const [transactionData, setTransactionData] = useState([]);
-  console.log(orderData, "order");
+  // console.log(orderData, "order");
 
   useEffect(() => {
     async function fetchData() {
@@ -267,6 +267,7 @@ function OrderDetails() {
                         paddingBottom: 5,
                       }}
                     >
+                      <Col span={2}>Qty</Col>
                       <Col span={4}>Category</Col>
                       <Col span={4}>Shape</Col>
                       <Col span={4}>Comments</Col>
@@ -282,6 +283,9 @@ function OrderDetails() {
                           marginTop: 10,
                         }}
                       >
+                        <Col span={2}>
+                          {data.order_item_object.frame?.quantity}
+                        </Col>
                         <Col span={4}>
                           {data.order_item_object.frame?.category}
                         </Col>
@@ -343,7 +347,26 @@ function OrderDetails() {
                       }}
                     >
                       <Col span={5}>Total Amount :</Col>
-                      <Col span={8}>{transactionData?.[0]?.total_price}</Col>
+                      {/* <Col span={8}>{transactionData?.[0]?.total_price}</Col> */}
+                      <Col span={8}>
+                        {(() => {
+                          let orderItemPrice = 0;
+                          if (record.order_item_object) {
+                            Object.values(record.order_item_object).forEach(
+                              (item) => {
+                                if (
+                                  item &&
+                                  typeof item === "object" &&
+                                  item.price
+                                ) {
+                                  orderItemPrice += parseInt(item.price, 10);
+                                }
+                              }
+                            );
+                          }
+                          return orderItemPrice;
+                        })()}
+                      </Col>
                     </Row>
                   </div>
 

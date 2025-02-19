@@ -26,7 +26,8 @@ function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [members, setMembers] = useState(null);
+  const [members, setMembers] = useState([]);
+  const [stores, setStores] = useState([]);
 
   const navigate = useNavigate();
 
@@ -78,12 +79,89 @@ function App() {
     }
   };
 
+  // const handleUpdateMember = async (updatedMember) => {
+  //   await AuthServieApi.updateMember(updatedMember);
+
+  //   const updatedMembers = members.map((member) =>
+  //     member.id === updatedMember.id ? updatedMember : member
+  //   );
+  //   setMembers(updatedMembers);
+  // };
+
   const handleUpdateMember = async (updatedMember) => {
-    await AuthServieApi.updateMember(updatedMember);
-    const updatedMembers = members.map((member) =>
-      member.id === updatedMember.id ? updatedMember : member
-    );
-    setMembers(updatedMembers);
+    try {
+      // Ensure API call returns a response before destructuring
+      const response = await AuthServieApi.updateMember(updatedMember);
+
+      if (!response) {
+        throw new Error("No response from API");
+      }
+
+      const { data, error } = response;
+
+      if (error) {
+        console.error("Error updating member:", error.message);
+        return { data: null, success: false };
+      }
+
+      console.log("Update successful! Member updated:", data);
+
+      // Ensure members exist before updating
+      setMembers(
+        (prevMembers) =>
+          prevMembers?.map((member) =>
+            member.id === updatedMember.id
+              ? { ...member, ...data.member }
+              : member
+          ) || []
+      );
+
+      return { data, success: true };
+    } catch (err) {
+      console.error("Unexpected error in handleUpdateMember:", err);
+      return { data: null, success: false };
+    }
+  };
+
+  // const handleUpdateStore = async (updatedStore) => {
+  //   await AuthServieApi.updateStore(updatedStore);
+  //   const updatedStores = stores.map((store) =>
+  //     store.id === updatedStore.id ? updatedStore : store
+  //   );
+  //   setStores(updatedStores);
+  // };
+
+  const handleUpdateStore = async (updatedStore) => {
+    try {
+      // Ensure API call returns a response before destructuring
+      const response = await AuthServieApi.updateStore(updatedStore);
+
+      if (!response) {
+        throw new Error("No response from API");
+      }
+
+      const { data, error } = response;
+
+      if (error) {
+        console.error("Error updating store:", error.message);
+        return { data: null, success: false };
+      }
+
+      console.log("Update successful! Store updated:", data);
+
+      // Ensure stores exist before updating
+      setStores(
+        (prevStores) =>
+          prevStores?.map((store) =>
+            store.id === updatedStore.id ? { ...store, ...data.store } : store
+          ) || []
+      );
+
+      return { data, success: true };
+    } catch (err) {
+      console.error("Unexpected error in handleUpdateStore:", err);
+      return { data: null, success: false };
+    }
   };
 
   const handleSignIn = async () => {
@@ -119,6 +197,7 @@ function App() {
 
   return (
     // <Router>
+
     <Routes>
       <Route
         path="/login"
@@ -152,9 +231,13 @@ function App() {
       />
       <Route
         path="/userInfo/:userId"
+        // path="/userInfo/"
         element={<UserInfo updateMember={handleUpdateMember}></UserInfo>}
       ></Route>
-      <Route path="/storeInfo" element={<StoreInfo></StoreInfo>}></Route>
+      <Route
+        path="/storeInfo/:userId"
+        element={<StoreInfo updateStore={handleUpdateStore}></StoreInfo>}
+      ></Route>
 
       <Route path="/forgetpassword" element={<ResetPassword />} />
       <Route path="/SetNewPassword" element={<SetNewPassword />} />
@@ -171,6 +254,7 @@ function App() {
         }
       />
     </Routes>
+
     // </Router>
   );
 }

@@ -44,7 +44,8 @@ class FrameDetails extends BaseApi {
     searchTerm = "",
     searchShape = "",
     searchCategory = "",
-    s_id
+    s_id,
+    filter
   ) {
     try {
       // const { data, error } = await this.supabase
@@ -64,6 +65,19 @@ class FrameDetails extends BaseApi {
       }
       if (Boolean(searchShape)) {
         query = query.ilike("shape", `%${searchShape}%`);
+      }
+
+      if (filter?.brand) {
+        query = query.eq("brand", filter.brand);
+      }
+      if (filter?.shape) {
+        query = query.eq("shape", filter.shape);
+      }
+      if (filter?.category) {
+        query = query.eq("category", filter.category);
+      }
+      if (filter?.id) {
+        query = query.eq("id", filter.id);
       }
 
       // Excute Query
