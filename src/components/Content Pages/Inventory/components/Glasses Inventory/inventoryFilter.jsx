@@ -18,8 +18,19 @@ function InventoryFilter() {
   const [itemData, setItemData] = useState([]);
   const [isEditModalOpen, setisEditModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
-
   const { store } = useContext(AppContext);
+
+  const [isMobileView, setIsMobileView] = useState(window.innerWidth < 768);
+
+  // Handle window resize
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobileView(window.innerWidth < 768);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   // Normalize values
   const normalizeValue = (value) => {
@@ -47,7 +58,7 @@ function InventoryFilter() {
   // Fetch all item details
   async function fetchData() {
     try {
-      const { success, data } = await AdditemDetail.fetchAllDetails();
+      const { success, data } = await AdditemDetail.fetchAllDetail(store.s_id);
       setItemData(data);
     } catch (error) {
       console.error("Error fetching item details:", error);
@@ -55,6 +66,7 @@ function InventoryFilter() {
     }
   }
 
+  //fetch filter data with type and num
   async function fetchFilteredData() {
     const filters = {
       glassType: normalizeValue(searchType),
@@ -62,13 +74,16 @@ function InventoryFilter() {
       cyl: normalizeValue(searchCyl),
       addition: normalizeValue(searchAdd),
     };
-    console.log(filters);
+    // console.log(filters);
 
     try {
-      const { data } = await AdditemDetail.fetchFilteredDetails(filters);
+      const { data } = await AdditemDetail.fetchFilteredDetails(
+        filters,
+        store.s_id
+      );
 
       if (data.length === 0) {
-        message.error("No data found with the selected filters.");
+        message.error("No data Found with the selected filters.");
       }
 
       setItemData(data);
@@ -121,84 +136,187 @@ function InventoryFilter() {
     setSelectedItem(null);
     setisEditModalOpen(false);
   };
-  // Table columns \
-  const columns = [
-    { title: "Name", dataIndex: "glass_type" },
-    { title: "Sph.", dataIndex: "sph" },
-    { title: "Cyl.", dataIndex: "cyl" },
-    { title: "Add.", dataIndex: "addition" },
-    { title: "Quantity.", dataIndex: "held_quantity" },
-    {
-      title: "Actions",
-      dataIndex: "actions",
-      render: (_, record) => (
-        <Button
-          color="primary"
-          size="small"
-          variant="filled"
-          onClick={() => handleViewClick(record)}
-        >
-          <EditOutlined />
-        </Button>
-      ),
-    },
-  ];
+
+  const useResponsiveColumns = (isMobileView, searchSph, searchCyl) => {
+    let columns = isMobileView
+      ? [
+          { title: "Typ.", dataIndex: "glass_type" },
+          { title: "Sph", dataIndex: "sph" },
+          // { title: "Cyl", dataIndex: "cyl" },
+          // { title: "Add", dataIndex: "addition" },
+          { title: "Qty.", dataIndex: "held_quantity" },
+          { title: "Rs.", dataIndex: "price" },
+          {
+            title: "Act.",
+            dataIndex: "actions",
+            render: (_, record) => (
+              <Button
+                color="primary"
+                size="small"
+                variant="filled"
+                onClick={() => handleViewClick(record)}
+              >
+                <EditOutlined />
+              </Button>
+            ),
+          },
+        ]
+      : [
+          { title: "Type", dataIndex: "glass_type" },
+          { title: "Sph.", dataIndex: "sph" },
+          // { title: "Add.", dataIndex: "addition" },
+          { title: "Qty.", dataIndex: "held_quantity" },
+          { title: "Price", dataIndex: "price" },
+          {
+            title: "Action",
+            dataIndex: "actions",
+            render: (_, record) => (
+              <Button
+                color="primary"
+                size="small"
+                variant="filled"
+                onClick={() => handleViewClick(record)}
+              >
+                <EditOutlined />
+              </Button>
+            ),
+          },
+        ];
+
+    // Conditionally add "Cyl." column
+    if (!searchSph || searchCyl) {
+      columns.splice(2, 0, { title: "Cyl.", dataIndex: "cyl" });
+    }
+
+    // Conditionally add "Add." column
+    if (!searchSph || searchAdd) {
+      columns.splice(3, 0, { title: "Add", dataIndex: "addition" });
+    }
+
+    return columns;
+  };
+  // Usage Example
+  const columns = useResponsiveColumns(
+    isMobileView,
+    searchSph,
+    searchCyl,
+    searchAdd
+  );
 
   return (
     <>
-      <h2>Inventory</h2>
-      <Row gutter={12}>
-        <Col>
-          <Select
-            allowClear
-            showSearch
-            placeholder="Select Glass Type"
-            optionFilterProp="label"
-            style={{ marginBottom: "10px", width: 160 }}
-            value={searchType || undefined}
-            onChange={handleSearchTypeChange}
-            options={items?.map((item) => ({
-              value: item.name,
-              label: item.name,
-            }))}
-          />
-        </Col>
+      {isMobileView ? (
+        <>
+          <h2>Inventory Filter</h2>
+          <Col span={12}>
+            <Select
+              allowClear
+              showSearch
+              placeholder="Select Glass Type"
+              optionFilterProp="label"
+              style={{ marginBottom: "10px", width: 180 }}
+              value={searchType || undefined}
+              onChange={handleSearchTypeChange}
+              options={items?.map((item) => ({
+                value: item.name,
+                label: item.name,
+              }))}
+            />
+          </Col>
+          <Row gutter={12}>
+            <Col span={7} style={{ width: "auto" }}>
+              <Form.Item>
+                <SphNumberSelector
+                  value={searchSph}
+                  onChange={handleSearchSphChange}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={6} style={{ width: "auto" }}>
+              <Form.Item>
+                <CylNumberSelector
+                  value={searchCyl}
+                  onChange={handleSearchCylChange}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={6} style={{ width: "auto" }}>
+              <Form.Item>
+                <AddtitionNumList
+                  value={searchAdd}
+                  onChange={handleSearchAddChange}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={1}>
+              <Button
+                type="primary"
+                color="danger"
+                variant="solid"
+                onClick={handleResetFilters}
+              >
+                Reset
+              </Button>
+            </Col>
+          </Row>
+        </>
+      ) : (
+        <>
+          <h2>Inventory Filter</h2>
+          <Row gutter={12}>
+            <Col>
+              <Select
+                allowClear
+                showSearch
+                placeholder="Select Glass Type"
+                optionFilterProp="label"
+                style={{ marginBottom: "10px", width: 160 }}
+                value={searchType || undefined}
+                onChange={handleSearchTypeChange}
+                options={items?.map((item) => ({
+                  value: item.name,
+                  label: item.name,
+                }))}
+              />
+            </Col>
 
-        <Col span={3} style={{ width: "auto" }}>
-          <Form.Item>
-            <SphNumberSelector
-              value={searchSph}
-              onChange={handleSearchSphChange}
-            />
-          </Form.Item>
-        </Col>
-        <Col span={3} style={{ width: "auto" }}>
-          <Form.Item>
-            <CylNumberSelector
-              value={searchCyl}
-              onChange={handleSearchCylChange}
-            />
-          </Form.Item>
-        </Col>
-        <Col span={3} style={{ width: "auto" }}>
-          <Form.Item>
-            <AddtitionNumList
-              value={searchAdd}
-              onChange={handleSearchAddChange}
-            />
-          </Form.Item>
-        </Col>
-        <Col span={2}>
-          <Button
-            type="primary"
-            color="danger"
-            variant="solid"
-            onClick={handleResetFilters}
-          >
-            Reset Filters
-          </Button>
-        </Col>
-      </Row>
+            <Col span={3} style={{ width: "auto" }}>
+              <Form.Item>
+                <SphNumberSelector
+                  value={searchSph}
+                  onChange={handleSearchSphChange}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={3} style={{ width: "auto" }}>
+              <Form.Item>
+                <CylNumberSelector
+                  value={searchCyl}
+                  onChange={handleSearchCylChange}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={3} style={{ width: "auto" }}>
+              <Form.Item>
+                <AddtitionNumList
+                  value={searchAdd}
+                  onChange={handleSearchAddChange}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={2}>
+              <Button
+                type="primary"
+                color="danger"
+                variant="solid"
+                onClick={handleResetFilters}
+              >
+                Reset Filters
+              </Button>
+            </Col>
+          </Row>
+        </>
+      )}
 
       <Table
         columns={columns}

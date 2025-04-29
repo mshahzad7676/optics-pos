@@ -52,7 +52,7 @@ function Orders() {
             marginBottom: "10px",
           }}
         >
-          <h2>Orders Records</h2>
+          <h2>Orders</h2>
           <div
             style={{
               gap: "10px",
@@ -82,7 +82,7 @@ function Orders() {
             marginBottom: "10px",
           }}
         >
-          <h2>Orders Records</h2>
+          <h2>Orders</h2>
           <div
             style={{
               gap: "10px",

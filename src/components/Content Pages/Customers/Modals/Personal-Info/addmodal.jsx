@@ -52,7 +52,7 @@ function AddCustomer({ open, onModalClose, setFormData }) {
               </Form.Item>
             </Col>
 
-            <Col span={12}>
+            {/* <Col span={12}>
               <Form.Item
                 label="Phone Number"
                 name="phone"
@@ -65,6 +65,28 @@ function AddCustomer({ open, onModalClose, setFormData }) {
                 ]}
               >
                 <Input maxLength={11} placeholder="030--------" />
+              </Form.Item>
+            </Col> */}
+            <Col span={12}>
+              <Form.Item
+                label="Phone Number"
+                name="phone"
+                rules={[
+                  { required: true, message: "Please Enter the Phone No." },
+                  {
+                    pattern: /^[0-9]+$/,
+                    message: "Please enter a valid phone number",
+                  },
+                ]}
+                normalize={(value) => {
+                  // Replace leading 0 with +92
+                  if (value.startsWith("0")) {
+                    return value.replace(/^0/, "+92");
+                  }
+                  return value;
+                }}
+              >
+                <Input maxLength={13} placeholder="030--------" />
               </Form.Item>
             </Col>
 
@@ -95,7 +117,7 @@ function AddCustomer({ open, onModalClose, setFormData }) {
                   optionFilterProp="label"
                   options={[
                     { value: "Retail", label: "Retail" },
-                    { value: "Whole Sale", label: "Whole Sale" },
+                    { value: "Wholesale", label: "Wholesale" },
                   ]}
                 />
               </Form.Item>

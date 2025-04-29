@@ -74,7 +74,7 @@ class TransactionApi extends BaseApi {
             id,
             name,
             phone
-          )`
+          ),orders:orders(order_date)`
         )
         .eq("s_id", s_id)
         .order("id", { ascending: false });
@@ -93,8 +93,49 @@ class TransactionApi extends BaseApi {
 
       return data;
     } catch (err) {
+      console.error("Error fetching Transaction:", err);
+      return [];
+    }
+  }
+  //fetch All transactions by c_id
+  static async fetchCustomerTransacton(id, order_id) {
+    try {
+      // const { data, error } = await this.supabase
+      let query = this.supabase
+        .from("order_transactions")
+        .select(`*`)
+        // .eq("s_id", s_id)
+        .eq("c_id", id)
+        .eq("order_id", order_id)
+        .order("id", { ascending: false });
+
+      const { data, error } = await query;
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      return data;
+    } catch (err) {
       console.error("Error fetching Glass:", err);
       return [];
+    }
+  }
+
+  // delete Transaction
+  static async deleteTransaction(transId) {
+    try {
+      const { error } = await this.supabase
+        .from("order_transactions")
+        .delete()
+        .eq("id", transId);
+
+      if (error) {
+        throw new Error(error.message);
+      }
+      return true;
+    } catch (e) {
+      console.error("Error deleting Transaction:", e);
+      return false;
     }
   }
 }

@@ -16,10 +16,10 @@ function CustomerTable({ searchTerm }) {
   const navigate = useNavigate();
 
   const handleAddVisitClick = (id) => {
-    navigate(`/Retail/Customer/${id}/order/`);
+    navigate(`/retail/customer/${id}/order/`);
   };
   const handleAddVisitWholeSaleClick = (id) => {
-    navigate(`/Wholesale/Customer/${id}/order/`);
+    navigate(`/wholesale/customer/${id}/order/`);
   };
 
   const [isEditModalOpen, setisEditModalOpen] = useState(false);
@@ -65,6 +65,7 @@ function CustomerTable({ searchTerm }) {
       okText: "Yes",
       okType: "danger",
       cancelText: "No",
+      maskClosable: true,
       onOk: () => handleDelete(customerId),
       onCancel() {},
     });
@@ -101,6 +102,15 @@ function CustomerTable({ searchTerm }) {
     {
       title: "Phone No",
       dataIndex: "phone",
+      render: (phone) => (
+        <a
+          href={`https://wa.me/${phone}`}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {phone}
+        </a>
+      ),
     },
     {
       title: "City",
@@ -130,8 +140,16 @@ function CustomerTable({ searchTerm }) {
       title: "Customer of",
       dataIndex: "store",
       render: (_, record) => (
-        <Tag color={record.store === "Retail" ? "green" : "blue"}>
-          {record.store}
+        <Tag
+          color={
+            record.store === "Retail"
+              ? "green"
+              : record.store === "Whole Sale"
+              ? "blue"
+              : "red"
+          }
+        >
+          {record.store || "N/A"}
         </Tag>
       ),
     },

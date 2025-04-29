@@ -101,53 +101,22 @@
 // }
 
 // export default UserInfo;
-import React, { useState } from "react";
+
 import { Button, Input, Form, Typography } from "antd";
 import { PhoneOutlined, UserOutlined } from "@ant-design/icons";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import "../Login/login.css";
 
 const { Title } = Typography;
 
-function UserInfo({ updateMember }) {
+function UserInfo({ updateMember, userId, memberId }) {
   const navigate = useNavigate();
   const [form] = Form.useForm();
-  const { userId } = useParams();
 
   // Handle Skip button click
   const handleSkip = () => {
     navigate(`/storeinfo/${userId}`);
   };
-
-  // Handle Login and Update Member button
-  // const handleLogin_Update = async () => {
-  //   try {
-  //     const values = await form.validateFields();
-
-  //     // Ensure updateMember returns an object
-  //     const result = await updateMember({
-  //       name: values.name,
-  //       phone: values.phone,
-  //       id: userId,
-  //     });
-
-  //     console.log("updateMember result:", result);
-
-  //     if (!result || typeof result !== "object") {
-  //       throw new Error("updateMember did not return a valid object");
-  //     }
-
-  //     const { response, data } = result; // Safe destructuring after validation
-
-  //     if (response && data?.member?.u_id) {
-  //       navigate(`/storeInfo/${data.member.u_id}`);
-  //     } else {
-  //       console.error("Invalid API response:", response, data);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error updating member:", error);
-  //   }
-  // };
 
   const handleLogin_Update = async () => {
     try {
@@ -155,7 +124,7 @@ function UserInfo({ updateMember }) {
       const { success, data } = await updateMember({
         name: values.name,
         phone: values.phone,
-        id: userId,
+        id: memberId,
       });
       console.log(data, "res");
       if (success) {
@@ -209,6 +178,7 @@ function UserInfo({ updateMember }) {
               className="login-btn"
               block
               onClick={handleLogin_Update}
+              disabled={!memberId}
             >
               Next
             </Button>
@@ -222,6 +192,7 @@ function UserInfo({ updateMember }) {
               className="login-btn"
               block
               onClick={handleSkip}
+              disabled={!memberId}
             >
               Skip
             </Button>

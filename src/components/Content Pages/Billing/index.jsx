@@ -1,11 +1,12 @@
 import React, { useContext, useState, useEffect } from "react";
-import { Button, Input, Select } from "antd";
+import { Button, Col, Input, Row, Select } from "antd";
 import { PlusCircleOutlined, SearchOutlined } from "@ant-design/icons";
 import TransactionTable from "./components/transaction-table";
 import TransactionApi from "../../../api/TransactionApi";
 import { AppContext } from "../../SideNav";
 import CustomerAPI from "../../../api/CustomerApi";
 import MakeTransaction from "./Modal";
+import BillingList from "../../Mobile View/Billing";
 
 const suffix = (
   <SearchOutlined
@@ -22,6 +23,17 @@ function OrderTransactions() {
   const [searchTerm, setSearchTerm] = useState("");
   const { user, store } = useContext(AppContext);
   const [selectedCustomer, setSelectedCustomer] = useState("");
+  const [isMobileView, setIsMobileView] = useState(window.innerWidth < 768);
+
+  // Handle window resize
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobileView(window.innerWidth < 768);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -29,6 +41,12 @@ function OrderTransactions() {
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
+  };
+
+  const handleCustomerSelect = (value) => {
+    // console.log("selected customer:", value);
+    setSelectedCustomer(value);
+    setSearchTerm("");
   };
 
   async function fetchData(searchTerm) {
@@ -51,34 +69,108 @@ function OrderTransactions() {
 
   return (
     <>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: "10px",
-        }}
-      >
-        <h2>Order Transactions</h2>
-
-        <div
-          style={{
-            gap: "10px",
-            display: "flex",
-            alignItems: "center",
-          }}
-        >
-          <Input
-            onChange={handleSearchChange}
-            placeholder="Name,Phone No"
-            enterButton
-            suffix={suffix}
+      {isMobileView ? (
+        <>
+          <div
             style={{
-              fontSize: "16px",
-              width: 300,
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginBottom: "10px",
             }}
-          />
-          {/* <Button
+          >
+            <h2>Order Transactions</h2>
+
+            <Button
+              onClick={showModal}
+              type="primary"
+              shape="round"
+              icon={<PlusCircleOutlined />}
+            >
+              Transaction
+            </Button>
+            <MakeTransaction
+              open={isModalOpen}
+              Data={Data}
+              store={store}
+              onModalClose={() => setIsModalOpen(false)}
+            ></MakeTransaction>
+          </div>
+
+          <Row gutter={16}>
+            <Col span={12}>
+              <Input
+                onChange={handleSearchChange}
+                placeholder="Name,Phone No"
+                enterButton
+                value={searchTerm}
+                allowClear
+                suffix={suffix}
+                style={{
+                  fontSize: "16px",
+                  width: "100%",
+                }}
+              />
+            </Col>
+
+            <Col span={12}>
+              <Select
+                allowClear
+                showSearch
+                placeholder="Select Customer Name"
+                optionFilterProp="label"
+                style={{ width: "100%" }}
+                // onChange={(value) => {
+                //   console.log("selected customer:", value);
+                //   setSelectedCustomer(value);
+                // }}
+                onChange={handleCustomerSelect}
+                options={Data?.map((customer) => ({
+                  value: customer.id,
+                  label: customer.name,
+                }))}
+              />
+            </Col>
+          </Row>
+          <div style={{ marginTop: 20 }}>
+            <BillingList
+              searchTerm={searchTerm}
+              selectedCustomer={selectedCustomer}
+            ></BillingList>
+          </div>
+        </>
+      ) : (
+        <>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginBottom: "10px",
+            }}
+          >
+            <h2>Order Transactions</h2>
+
+            <div
+              style={{
+                gap: "10px",
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              <Input
+                onChange={handleSearchChange}
+                placeholder="Name,Phone No"
+                enterButton
+                allowClear
+                value={searchTerm}
+                suffix={suffix}
+                style={{
+                  fontSize: "16px",
+                  width: 300,
+                }}
+              />
+              {/* <Button
             onClick={showModal}
             type="primary"
             shape="round-large"
@@ -91,52 +183,55 @@ function OrderTransactions() {
             onModalClose={() => setIsModalOpen(false)}
             setFormData={setFormData}
           ></AddCustomer> */}
-        </div>
-      </div>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: "10px",
-        }}
-      >
-        <Select
-          allowClear
-          showSearch
-          placeholder="Select Customer Name"
-          optionFilterProp="label"
-          style={{ marginBottom: "10px", width: 300 }}
-          onChange={(value) => {
-            console.log("selected customer:", value);
-            setSelectedCustomer(value);
-          }}
-          options={Data?.map((customer) => ({
-            value: customer.id,
-            label: customer.name,
-          }))}
-        />
-        <Button
-          onClick={showModal}
-          type="primary"
-          shape="round-large"
-          icon={<PlusCircleOutlined />}
-        >
-          Make Transaction
-        </Button>
-        <MakeTransaction
-          open={isModalOpen}
-          Data={Data}
-          store={store}
-          onModalClose={() => setIsModalOpen(false)}
-        ></MakeTransaction>
-      </div>
-      <div className="table">
-        <TransactionTable
-          searchTerm={searchTerm}
-          selectedCustomer={selectedCustomer}
-        ></TransactionTable>
-      </div>
+            </div>
+          </div>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginBottom: "10px",
+            }}
+          >
+            <Select
+              allowClear
+              showSearch
+              placeholder="Select Customer Name"
+              optionFilterProp="label"
+              style={{ marginBottom: "10px", width: 300 }}
+              // onChange={(value) => {
+              //   console.log("selected customer:", value);
+              //   setSelectedCustomer(value);
+              // }}
+              onChange={handleCustomerSelect}
+              options={Data?.map((customer) => ({
+                value: customer.id,
+                label: customer.name,
+              }))}
+            />
+            <Button
+              onClick={showModal}
+              type="primary"
+              shape="round-large"
+              icon={<PlusCircleOutlined />}
+            >
+              Transaction
+            </Button>
+            <MakeTransaction
+              open={isModalOpen}
+              Data={Data}
+              store={store}
+              onModalClose={() => setIsModalOpen(false)}
+            ></MakeTransaction>
+          </div>
+          <div className="table">
+            <TransactionTable
+              searchTerm={searchTerm}
+              selectedCustomer={selectedCustomer}
+            ></TransactionTable>
+          </div>
+        </>
+      )}
     </>
   );
 }

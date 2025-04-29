@@ -41,7 +41,7 @@ import Setting from "../../Auth/Setting";
 import FramesInventory from "../Content Pages/Inventory/components/Frames Inventory";
 import GlassesInventory from "../Content Pages/Inventory/components/Glasses Inventory";
 import AddItemDetails from "../Content Pages/Inventory/components/Glasses Inventory/addItemsDetails";
-import ViewItemDetails from "../Content Pages/Inventory/components/Glasses Inventory/Minus Ranges/ViewItemDetails";
+import ViewItemDetails from "../Content Pages/Inventory/components/Glasses Inventory/ViewItemDetails";
 import Employee from "../Content Pages/Employees";
 import MemberApi from "../../api/Member/MemberApi";
 import MemberStores from "../Content Pages/Employees/Member Stores";
@@ -51,6 +51,8 @@ import InventoryFilter from "../Content Pages/Inventory/components/Glasses Inven
 import AddVisitWholeSale from "../Content Pages/Customers/components/addVisitWholeSale";
 import Wholesalers from "../Content Pages/Wholesale";
 import { Footer } from "antd/es/layout/layout";
+import { computeHeadingLevel } from "@testing-library/react";
+import PricingList from "../Content Pages/Inventory/components/Pricing List";
 
 const { Panel } = Collapse;
 const { Header, Sider, Content } = Layout;
@@ -93,7 +95,7 @@ function MainPage({ onLogout, password, setPassword }) {
         setUser(authUser);
       } else {
         // If no user data is returned, navigate to signup
-        console.error("No user found. Redirecting to login.");
+        console.error("No user Found. Redirecting to login.");
         navigate("/login");
       }
 
@@ -212,48 +214,24 @@ function MainPage({ onLogout, password, setPassword }) {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // const handleMenuClick = (key) => {
-  //   if (key === expandedMenu) {
-  //     setExpandedMenu(null); // Collapse if already expanded
-  //   } else if (menuItems.find((item) => item.key === key && item.children)) {
-  //     setExpandedMenu(key); // Expand submenu
-  //   } else {
-  //     setActiveMenu(key); // Activate the menu item
-  //     setVisible(false);
-  //   }
-  // };
-  //mera
-  // const handleMenuClick = (key) => {
-  //   if (key === expandedMenu) {
-  //     setExpandedMenu(null);
-  //   } else if (menuItems.find((item) => item.key === key && item.children)) {
-  //     setExpandedMenu(key);
-  //   } else {
-  //     setActiveMenu(key);
-  //     setVisible(false);
-
-  //     // const selectedItem = menuItems.find((item) => item.key === key);
-  //     // if (selectedItem?.route) {
-  //     // navigate(key.startsWith("/") ? key : `/${key}`, { replace: true });
-  //     navigate("/");
-  //     // }
-  //   }
-  // };
-
-  const handleMenuClick = (key) => {
-    // If the item has children, toggle expansion
-    const menuItem = menuItems.find((item) => item.key === key);
-    if (menuItem && menuItem.children) {
-      // Toggle submenu expansion
-      setExpandedMenu(expandedMenu === key ? null : key);
+  const handleMenuClick = (key, parentKey = null) => {
+    if (key === expandedMenu) {
+      setExpandedMenu(null);
+    } else if (menuItems.find((item) => item.key === key && item.children)) {
+      setExpandedMenu(key);
     } else {
-      // For a regular menu item, set it active and navigate to its route.
       setActiveMenu(key);
       setVisible(false);
-      // Here, key should be the route path (e.g., "/store/123", "/sales", etc.)
+
+      // Keep parent expanded if it's a submenu item
+      if (parentKey) {
+        setExpandedMenu(parentKey);
+      }
+
       navigate(key);
     }
   };
+
   const menuItems = [
     // { key: "Dashboard", label: "Dashboard", icon: <DashboardOutlined /> },
     {
@@ -269,45 +247,81 @@ function MainPage({ onLogout, password, setPassword }) {
       component: <Sales />,
     },
     {
-      key: "3",
+      key: "inv",
       label: "Inventory",
       icon: <DatabaseOutlined />,
       children: [
-        { key: "/inventory/frame", label: "Frames" },
-        { key: "/inventory/glasses", label: "Glasses" },
-        { key: "/inventory/glasses-filter", label: "Glasses Filter" },
+        {
+          key: "/frames",
+          label: "Frames",
+          component: <FramesInventory></FramesInventory>,
+        },
+        {
+          key: "/glasses",
+          label: "Glasses",
+          component: <GlassesInventory></GlassesInventory>,
+        },
+        {
+          key: "/inventory-filter",
+          label: "Inventory Filter",
+          component: <InventoryFilter></InventoryFilter>,
+        },
       ],
     },
-    { key: "/estore", label: "E-Store", icon: <ShoppingOutlined /> },
-    { key: "/employee", label: "Members", icon: <UserOutlined /> },
-    { key: "/billing", label: "Billing", icon: <StockOutlined /> },
-    { key: "/wholesale", label: "Wholesalers", icon: <AppstoreAddOutlined /> },
+    {
+      key: "/estore",
+      label: "E-Store",
+      icon: <ShoppingOutlined />,
+      component: <Estore></Estore>,
+    },
+    {
+      key: "/employee",
+      label: "Members",
+      icon: <UserOutlined />,
+      component: <Employee></Employee>,
+    },
+    {
+      key: "/billing",
+      label: "Billing",
+      icon: <StockOutlined />,
+      component: <OrderTransactions></OrderTransactions>,
+    },
+    {
+      key: "/wholesale",
+      label: "Wholesalers",
+      icon: <AppstoreAddOutlined />,
+      component: <Wholesalers></Wholesalers>,
+    },
   ];
 
   const hideLayoutPaths = ["/memberstores"];
   const isLayoutHidden = hideLayoutPaths.includes(location.pathname);
 
   const isHistoryPage = location.pathname.startsWith("/view-visited-history/");
-  const isRetailOrderPage = location.pathname.startsWith("/retail/Customer/");
+  const isRetailOrderPage = location.pathname.startsWith("/retail/customer/");
   const isWholesaleOrderPage = location.pathname.startsWith(
-    "/wholesale/Customer/"
-  );
-  const isRetailOrderEditPage =
-    location.pathname.startsWith("/Retail/Customer/");
-  const isWholesaleOrderEditPage = location.pathname.startsWith(
-    "/Wholesale/Customer/"
+    "/wholesale/customer/"
   );
   const isOrderDetailPage = location.pathname.startsWith("/orderdetails/");
+  const isaddItemsDetailsPage =
+    location.pathname.startsWith("/addItemsDetails/");
+  const isviewItemsDetailsPage =
+    location.pathname.startsWith("/viewItemsDetails/");
+
+  const isviewItemsPriceDetails =
+    location.pathname.startsWith("/addItemsPrice/");
+
   useEffect(() => {
     if (
       !isHistoryPage &&
       !isRetailOrderPage &&
       !isWholesaleOrderPage &&
-      !isOrderDetailPage
-      // !isRetailOrderEditPage &&
-      // !isWholesaleOrderEditPage
+      !isOrderDetailPage &&
+      !isaddItemsDetailsPage &&
+      !isviewItemsDetailsPage &&
+      !isviewItemsPriceDetails
     ) {
-      // setActiveMenu("/store/:s_id"); // Default menu when returning
+      // Default menu when returning
       setActiveMenu(`${activeMenu}`);
     }
   }, [location.pathname]);
@@ -365,8 +379,6 @@ function MainPage({ onLogout, password, setPassword }) {
                 display: "flex",
                 flexDirection: "column",
                 height: "100vh",
-                // height: "calc(100vh - env(safe-area-inset-bottom))", // Fix for Android
-                // height: "calc(100vh - constant(safe-area-inset-bottom))", // Fix for iOS
               }}
             >
               {/* Profile Section */}
@@ -408,30 +420,33 @@ function MainPage({ onLogout, password, setPassword }) {
               </div>
 
               {/* Navigation List */}
-
               <div style={{ flex: 1, overflowY: "auto" }}>
                 <List style={{ margin: 0 }}>
                   {menuItems.map((item) => (
                     <React.Fragment key={item.key}>
                       <List.Item
-                        // arrowIcon={false}
                         prefix={item.icon}
                         arrow={
-                          item.children ? (
-                            expandedMenu === item.key ? (
-                              <UpOutlined></UpOutlined>
+                          item.key === "inv" ? (
+                            expandedMenu === "inv" ? (
+                              <UpOutlined />
                             ) : (
-                              <DownOutlined></DownOutlined>
+                              <DownOutlined />
                             )
                           ) : (
                             false
                           )
                         }
-                        onClick={() => handleMenuClick(item.key)}
+                        onClick={() =>
+                          item.children
+                            ? setExpandedMenu(
+                                expandedMenu === item.key ? null : item.key
+                              )
+                            : handleMenuClick(item.key)
+                        }
                         style={{
                           backgroundColor:
                             activeMenu === item.key ? "#e6f7ff" : "",
-                          // activeMenu === item.key ? "#1677ff" : "",
                           fontWeight:
                             activeMenu === item.key ? "bold" : "normal",
                         }}
@@ -439,7 +454,7 @@ function MainPage({ onLogout, password, setPassword }) {
                         {item.label}
                       </List.Item>
 
-                      {/* Render Submenu if expanded */}
+                      {/* Render Submenu when expanded */}
                       {item.children && expandedMenu === item.key && (
                         <List
                           style={{
@@ -450,8 +465,10 @@ function MainPage({ onLogout, password, setPassword }) {
                           {item.children.map((subItem) => (
                             <List.Item
                               key={subItem.key}
-                              arrowIcon={false}
-                              onClick={() => handleMenuClick(subItem.key)}
+                              arrow={false}
+                              onClick={() =>
+                                handleMenuClick(subItem.key, item.key)
+                              }
                               style={{
                                 backgroundColor:
                                   activeMenu === subItem.key ? "#e6f7ff" : "",
@@ -499,16 +516,28 @@ function MainPage({ onLogout, password, setPassword }) {
             </Popup>
           </div>
           {/* Content */}
-          <div style={{ padding: "20px" }}>
+          <div
+            style={{
+              padding: "20px",
+              minHeight: "82dvh",
+            }}
+          >
             {/* {menuItems.find((item) => item.key === activeMenu)?.component} */}
             {!isHistoryPage &&
               !isRetailOrderPage &&
               !isWholesaleOrderPage &&
-              !isOrderDetailPage && (
-                // !isRetailOrderEditPage &&
-                // !isWholesaleOrderEditPage && (
+              !isOrderDetailPage &&
+              !isaddItemsDetailsPage &&
+              !isviewItemsDetailsPage &&
+              !isviewItemsPriceDetails && (
                 <>
-                  {menuItems.find((item) => item.key === activeMenu)?.component}
+                  {
+                    menuItems
+                      .flatMap((item) =>
+                        item.children ? [item, ...item.children] : [item]
+                      )
+                      .find((item) => item.key === activeMenu)?.component
+                  }
                 </>
               )}
             <Routes>
@@ -517,20 +546,34 @@ function MainPage({ onLogout, password, setPassword }) {
                 element={<ViewVisitedHistory></ViewVisitedHistory>}
               />
               <Route
-                path="/retail/Customer/:customer_id/order/:order_id?"
+                path="/retail/customer/:customer_id/order/:order_id?"
                 element={<Addvisitcustomer></Addvisitcustomer>}
               ></Route>
               <Route
-                path="/wholesale/Customer/:customer_id/order/:order_id?"
+                path="/wholesale/customer/:customer_id/order/:order_id?"
                 element={<AddVisitWholeSale></AddVisitWholeSale>}
               ></Route>
-
               <Route
                 path="/orderdetails/:order_id"
                 element={<OrderDetails></OrderDetails>}
               ></Route>
+              <Route
+                path="/addItemsDetails/:glass_type_id/:glass_type"
+                element={<AddItemDetails></AddItemDetails>}
+              ></Route>
+              <Route
+                path="/addItemsPrice/:glass_type_id/:glass_type"
+                element={<PricingList />}
+              />
+              <Route
+                path="/viewItemsDetails/:glass_type_id/:glass_type"
+                element={<ViewItemDetails store={store}></ViewItemDetails>}
+              ></Route>
             </Routes>
           </div>
+          <Footer style={{ paddingBottom: 10, textAlign: "center" }}>
+            Design ©{new Date().getFullYear()} Created by MAYAAR TECH
+          </Footer>
         </div>
       ) : (
         <>
@@ -736,6 +779,7 @@ function MainPage({ onLogout, password, setPassword }) {
                       path="/inventoryfilter"
                       element={<InventoryFilter />}
                     />
+
                     {/* <Route path="/contactlense" element={<ContactLenseInventory />} /> */}
                     <Route path="/estore" element={<Estore />} />
                     <Route
@@ -774,7 +818,7 @@ function MainPage({ onLogout, password, setPassword }) {
                       element={<Addvisitcustomer></Addvisitcustomer>}
                     ></Route>
                     <Route
-                      path="/wholesale/Customer/:customer_id/order/:order_id?"
+                      path="/wholesale/customer/:customer_id/order/:order_id?"
                       element={<AddVisitWholeSale></AddVisitWholeSale>}
                     ></Route>
 
@@ -794,13 +838,20 @@ function MainPage({ onLogout, password, setPassword }) {
                       path="/addItemsDetails/:glass_type_id/:glass_type"
                       element={<AddItemDetails></AddItemDetails>}
                     ></Route>
+
                     <Route
-                      path="/viewItemsDetails/:glass_type_id"
-                      element={<ViewItemDetails></ViewItemDetails>}
+                      path="/addItemsPrice/:glass_type_id/:glass_type"
+                      element={<PricingList />}
+                    />
+                    <Route
+                      path="/viewItemsDetails/:glass_type_id/:glass_type"
+                      element={
+                        <ViewItemDetails store={store}></ViewItemDetails>
+                      }
                     ></Route>
                   </Routes>
                 </Content>
-                <Footer style={{ textAlign: "center" }}>
+                <Footer style={{ paddingBottom: 10, textAlign: "center" }}>
                   Design ©{new Date().getFullYear()} Created by MAYAAR TECH
                 </Footer>
               </Layout>

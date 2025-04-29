@@ -68,7 +68,7 @@ function AddVisitWholeSale() {
         setLatestTransaction(transaction);
         console.log("Fetched Latest Transaction:", transaction);
       } else {
-        console.log("No previous transaction found. Setting balance to 0.");
+        console.log("No previous transaction Found. Setting balance to 0.");
         setLatestTransaction({ balance: 0 });
       }
     } catch (error) {
@@ -155,9 +155,7 @@ function AddVisitWholeSale() {
         align="middle"
         style={{ marginBottom: "16px" }}
       >
-        <h2 style={{ margin: 0 }}>
-          {order_id ? "Edit" : "Add"} Customer Visit Details
-        </h2>
+        <h2 style={{ margin: 0 }}>{order_id ? "Edit" : "Add"} Order Details</h2>
 
         {/* <Button type="primary" shape="round-large" onClick={handleSave}> */}
         <Button

@@ -42,7 +42,14 @@ const Login = ({ email, setEmail, password, setPassword, onLogin }) => {
           }}
         >
           {/* Email */}
-          <Form.Item label="Email Address" name="email">
+          <Form.Item
+            label="Email Address"
+            name="email"
+            rules={[
+              { required: true, message: "Please enter your email address!" },
+              { type: "email", message: "Enter a valid email address!" },
+            ]}
+          >
             <Input
               prefix={<MailOutlined />}
               placeholder="Username@gmail.com"

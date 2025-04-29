@@ -66,6 +66,7 @@ function FrameTable({ searchTerm, searchCategory, searchShape }) {
       okText: "Yes",
       okType: "danger",
       cancelText: "No",
+      maskClosable: true,
       onOk: () => handleDelete(frameid),
       onCancel() {},
     });

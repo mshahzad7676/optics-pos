@@ -28,7 +28,7 @@ function SalesMobile({ searchTerm }) {
   };
 
   const handleEditWSVisitClick = (customer_id, order_id) => {
-    navigate(`/wholeSale/customer/${customer_id}/order/${order_id}`);
+    navigate(`/wholesale/customer/${customer_id}/order/${order_id}`);
   };
 
   const [data, setData] = useState([]);
@@ -49,11 +49,13 @@ function SalesMobile({ searchTerm }) {
   }
 
   async function fetchMember() {
+    setLoading(true);
     try {
       const members = await MemberApi.fetchMember(searchTerm, store.s_id);
       if (members) {
         setMembers(members);
       }
+      setLoading(false);
     } catch (error) {
       console.error("Failed to fetch Member:", error);
     }
@@ -96,6 +98,7 @@ function SalesMobile({ searchTerm }) {
       cancelText: "No",
       locale: null,
       onConfirm: () => handleDelete(order_id),
+      onCancel: () => {},
     });
   };
 
@@ -119,10 +122,24 @@ function SalesMobile({ searchTerm }) {
 
   return (
     <div style={{ padding: "10px" }}>
-      <h3>Orders ({orderCount})</h3>
+      {/* <h3>Orders ({orderCount})</h3> */}
 
       {loading ? (
-        <div style={{ textAlign: "center", padding: "20px" }}>
+        <div
+          style={{
+            position: "fixed",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            width: "100vw",
+            height: "100vh",
+            background: "rgba(255, 255, 255, 0.8)",
+            zIndex: 9999,
+          }}
+        >
           <SpinLoading color="primary" />
         </div>
       ) : data.length > 0 ? (
@@ -311,9 +328,7 @@ function SalesMobile({ searchTerm }) {
           ))}
         </>
       ) : (
-        <p style={{ textAlign: "center", color: "gray" }}>
-          No customers found.
-        </p>
+        <p style={{ textAlign: "center", color: "gray" }}>No Orders Found.</p>
       )}
     </div>
   );

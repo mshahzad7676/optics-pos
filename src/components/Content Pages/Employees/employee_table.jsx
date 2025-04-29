@@ -65,6 +65,7 @@ function EmployeeTable({ searchTerm }) {
       okText: "Yes",
       okType: "danger",
       cancelText: "No",
+      maskClosable: true,
       onOk: () => handleDelete(memberId),
       onCancel() {},
     });

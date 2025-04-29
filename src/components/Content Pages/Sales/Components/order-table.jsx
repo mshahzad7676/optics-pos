@@ -42,7 +42,7 @@ function OrderTable({ searchTerm }) {
   };
 
   const handleEditWSVisitClick = (customer_id, order_id) => {
-    navigate(`/wholeSale/customer/${customer_id}/order/${order_id}`);
+    navigate(`/wholesale/customer/${customer_id}/order/${order_id}`);
   };
 
   const [data, setData] = useState([]);
@@ -94,6 +94,7 @@ function OrderTable({ searchTerm }) {
       okText: "Yes",
       okType: "danger",
       cancelText: "No",
+      maskClosable: true,
       onOk: () => handleDelete(order_id),
       onCancel() {},
     });
@@ -168,6 +169,10 @@ function OrderTable({ searchTerm }) {
     {
       title: "Order Date",
       dataIndex: "order_date",
+      render: (text) => {
+        const date = new Date(text);
+        return `${date.toISOString().split("T")[0]}`; // Formats as YYYY-MM-DDTHH:MM:SS
+      },
     },
     // {
     //   title: "Total Price",
@@ -242,10 +247,12 @@ function OrderTable({ searchTerm }) {
 
   return (
     <>
-      <h4>Total Orders: {orderCount}</h4>
+      {/* <h4>Total Orders: {orderCount}</h4> */}
       <Table
         columns={columns}
         dataSource={data}
+        pagination={false}
+        scroll={{ y: 400 }}
         rowKey="orderid"
         size="middle"
       />

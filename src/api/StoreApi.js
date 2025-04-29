@@ -69,7 +69,7 @@ class StoreApi extends BaseApi {
       if (storeError) throw storeError;
 
       if (!storeData || storeData.length === 0) {
-        throw new Error("No store found for the provided ID.");
+        throw new Error("No store Found for the provided ID.");
       }
 
       // Return the first store if needed or all matching rows

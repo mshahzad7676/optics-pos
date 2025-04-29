@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Button, Input, Form, Typography, Select } from "antd";
 import {
   MailOutlined,
@@ -11,6 +11,7 @@ import {
 } from "@ant-design/icons";
 import "../Login/login.css";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import { AppContext } from "../../components/SideNav";
 const { Title } = Typography;
 
 function StoreInfo({ updateStore }) {
@@ -52,7 +53,13 @@ function StoreInfo({ updateStore }) {
         {/* <Form layout="vertical" onFinish={handleSignUpFinish}> */}
         <Form layout="vertical" form={form}>
           {/* Store Name */}
-          <Form.Item label="Shop Name" name="name">
+          <Form.Item
+            label="Shop Name"
+            name="name"
+            rules={[
+              { required: true, message: "Please Enter Your Shop Name!" },
+            ]}
+          >
             <Input
               prefix={<ShoppingCartOutlined />}
               placeholder="Optical Complex"
@@ -61,7 +68,13 @@ function StoreInfo({ updateStore }) {
               // onChange={(e) => setEmail(e.target.value)}
             />
           </Form.Item>
-          <Form.Item label="Place of Shop" name="city">
+          <Form.Item
+            label="Place of Shop"
+            name="city"
+            rules={[
+              { required: true, message: "Please Enter Your Shop City!" },
+            ]}
+          >
             <Input
               prefix={<BranchesOutlined />}
               placeholder="Saddar-Rwp"
@@ -71,11 +84,15 @@ function StoreInfo({ updateStore }) {
           </Form.Item>
 
           {/*  */}
-          <Form.Item label="Shop Type" name="type">
+          <Form.Item
+            label="Shop Type"
+            name="type"
+            rules={[{ required: true, message: "Please Enter Shop Type!" }]}
+          >
             <Select
               // style={{ width: 120 }}
               placeholder="Enter Shop Type"
-              defaultValue={"Retail & Wholesale"}
+              // defaultValue={"Retail & Wholesale"}
               options={[
                 { value: "Retail", label: "Retail" },
                 { value: "Wholesale", label: "Wholesale" },

@@ -116,7 +116,7 @@ class MemberApi extends BaseAdminApi {
       if (memberError) throw memberError;
 
       if (!storeMember || storeMember.length === 0) {
-        throw new Error("No store found for the provided ID.");
+        throw new Error("No store Found for the provided ID.");
       }
 
       // Return the first store if needed or all matching rows

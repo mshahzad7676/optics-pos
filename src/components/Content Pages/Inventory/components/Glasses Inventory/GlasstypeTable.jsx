@@ -6,17 +6,18 @@ import {
   EyeTwoTone,
   ExclamationCircleFilled,
   PlusSquareTwoTone,
+  DollarCircleTwoTone,
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { AppContext } from "../../../../SideNav";
 import AddGlassTypeModal from "./Modal/addGlassTypeModal";
 import GlassTypeApi from "../../../../../api/Glasses Inventory/GlassTypeApi";
 
-function GlassTypeTable({ searchTerm }) {
+function GlassTypeTable({ searchTerm, store }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [item, setItem] = useState([]);
-  const { user, store } = useContext(AppContext);
+  // const { user, store } = useContext(AppContext);
   const navigate = useNavigate();
 
   const showEditModal = (record) => {
@@ -55,6 +56,7 @@ function GlassTypeTable({ searchTerm }) {
       okText: "Yes",
       okType: "danger",
       cancelText: "No",
+      maskClosable: true,
       onOk: () => handleDelete(item_id),
       onCancel() {},
     });
@@ -69,13 +71,16 @@ function GlassTypeTable({ searchTerm }) {
   const handleAddItemDetails = (id, glass_type) => {
     navigate(`/addItemsDetails/${id}/${glass_type}`);
   };
-  const handleViewItemDetails = (id) => {
-    navigate(`/viewItemsDetails/${id}`);
+  const handleAddItemPrice = (id, glass_type) => {
+    navigate(`/addItemsPrice/${id}/${glass_type}`);
+  };
+  const handleViewItemDetails = (id, glass_type) => {
+    navigate(`/viewItemsDetails/${id}/${glass_type}`);
   };
 
   const columns = [
     {
-      title: "Item ID",
+      title: "ID",
       dataIndex: "id",
     },
     {
@@ -83,10 +88,10 @@ function GlassTypeTable({ searchTerm }) {
       dataIndex: "name",
     },
 
-    {
-      title: "Total Quantity",
-      dataIndex: "quantity",
-    },
+    // {
+    //   title: "Total Quantity",
+    //   dataIndex: "quantity",
+    // },
     // {
     //   title: "Price",
     //   dataIndex: "price",
@@ -98,7 +103,7 @@ function GlassTypeTable({ searchTerm }) {
         <div style={{ display: "flex", gap: "8px" }}>
           {/* View Item */}
           <Button
-            onClick={() => handleViewItemDetails(record.id)}
+            onClick={() => handleViewItemDetails(record.id, record.name)}
             color="primary"
             variant="filled"
             size="small"
@@ -133,6 +138,15 @@ function GlassTypeTable({ searchTerm }) {
             onClick={() => showDeleteConfirm(record.id)}
           >
             <DeleteOutlined />
+          </Button>
+          <Button
+            onClick={() => handleAddItemPrice(record.id, record.name)}
+            color="primary"
+            size="small"
+            variant="solid"
+            icon={<DollarCircleTwoTone />}
+          >
+            Pricing
           </Button>
         </div>
       ),

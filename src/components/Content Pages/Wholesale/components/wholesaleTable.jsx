@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { PlusSquareTwoTone } from "@ant-design/icons";
-import { Table, Button } from "antd";
+import { Table, Button, Tag } from "antd";
 import WholesaleApi from "../../../../api/wholesaleApi";
 
 function WholesaleTable({ data }) {
@@ -16,6 +16,19 @@ function WholesaleTable({ data }) {
     {
       title: "Category",
       dataIndex: "type",
+      render: (_, record) => (
+        <Tag
+          color={
+            record.type === "Retail"
+              ? "green"
+              : record.type === "Wholesale"
+              ? "blue"
+              : "red"
+          }
+        >
+          {record.type || "N/A"}
+        </Tag>
+      ),
     },
     {
       title: "Place",
@@ -41,6 +54,7 @@ function WholesaleTable({ data }) {
       <Table
         columns={columns}
         dataSource={data}
+        scroll={{ y: 400 }}
         pagination={false}
         size="middle"
       />

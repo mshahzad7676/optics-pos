@@ -2,12 +2,26 @@ import React, { useState, useEffect } from "react";
 import { Form, Input, Row, Col, Typography, Button } from "antd";
 import { useParams } from "react-router-dom";
 import AdditemDetail from "../../../../../../api/Glasses Inventory/AdditemDetail";
+import { useContext } from "react";
+import { AppContext } from "../../../../../SideNav";
 
-function Addition({ glassMinusRange, data }) {
+function Addition({ glassMinusRange, data, store }) {
   const [dataSource, setDataSource] = useState([]);
   const [loading, setLoading] = useState(false);
   const { glass_type_id } = useParams();
   const [form] = Form.useForm();
+  // const { store } = useContext(AppContext);
+  const [isMobileView, setIsMobileView] = useState(window.innerWidth < 768);
+
+  // Handle window resize
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobileView(window.innerWidth < 768);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     const range = glassMinusRange.split(" "); // ['Plain' 'to', '+3.00', 'Add','+1.00'];
@@ -128,7 +142,8 @@ function Addition({ glassMinusRange, data }) {
       await AdditemDetail.addDetails(
         processedData,
         glass_type_id,
-        glassMinusRange
+        glassMinusRange,
+        store.s_id
       );
       console.log("Data successfully saved to the database!");
     } catch (error) {
@@ -140,123 +155,250 @@ function Addition({ glassMinusRange, data }) {
   };
 
   return (
-    <Form form={form} onFinish={onFinish}>
-      <Form.Item>
-        <Row>
-          <Col span={4}>
-            <Typography.Title
-              level={2}
+    <>
+      {isMobileView ? (
+        <Form form={form} onFinish={onFinish}>
+          <Form.Item>
+            <Row
+              gutter={16}
               style={{
-                fontWeight: "bold",
-                fontSize: 20,
-                marginBottom: 20,
+                borderBottom: "1px solid #d9d9d9",
+                marginBottom: 5,
               }}
             >
-              Sph
-            </Typography.Title>
-          </Col>
-          <Col span={4}>
-            <Typography.Title
-              level={2}
-              style={{
-                fontWeight: "bold",
-                fontSize: 20,
-                marginBottom: 20,
-              }}
-            >
-              Addition
-            </Typography.Title>
-          </Col>
-          <Col span={4}>
-            <Typography.Title
-              level={2}
-              style={{
-                fontWeight: "bold",
-                fontSize: 20,
-                marginBottom: 20,
-              }}
-            >
-              Held Quantity
-            </Typography.Title>
-          </Col>
-          <Col span={5}>
-            <Typography.Title
-              level={2}
-              style={{
-                fontWeight: "bold",
-                fontSize: 20,
-                marginBottom: 20,
-              }}
-            >
-              Enter New Quantity
-            </Typography.Title>
-          </Col>
-          <Col span={4}>
-            <Typography.Title
-              level={2}
-              style={{
-                fontWeight: "bold",
-                fontSize: 20,
-                marginBottom: 20,
-              }}
-            >
-              Price
-            </Typography.Title>
-          </Col>
-        </Row>
-        {dataSource.map((item) => (
-          <Row key={item.key} gutter={16} style={{ marginBottom: "10px" }}>
-            <Col span={4}>
-              <strong>{item.sph}</strong>
-            </Col>
-            <Col span={4}>
-              <strong>{item.add}</strong>
-            </Col>
-            <Col span={4}>
-              <Input
-                value={item.quantity}
-                disabled
-                style={{ width: "100px" }}
-              />
-            </Col>
-            <Col span={5}>
-              <Input
-                value={item.newQuantity}
-                onChange={(e) =>
-                  handleNewQuantityChange(item.key, e.target.value)
-                }
-                style={{ width: "100px" }}
-                placeholder="Enter new quantity"
-                type="number"
-                step={0.5}
-              />
-            </Col>
-            <Col span={4}>
-              <Input
-                value={item.price}
-                onChange={(e) => handlePriceChange(item.key, e.target.value)}
-                style={{ width: "100px" }}
-                placeholder="Enter price"
-              />
-            </Col>
-          </Row>
-        ))}
-      </Form.Item>
-      <Form.Item>
-        <Row justify="center" style={{ marginTop: "30px" }}>
-          <Col span={11}>
-            <Button
-              onClick={() => form.submit()}
-              type="primary"
-              style={{ width: 130 }}
-              loading={loading}
-            >
-              Add Quantity
-            </Button>
-          </Col>
-        </Row>
-      </Form.Item>
-    </Form>
+              <Col span={3.5}>
+                <Typography.Title
+                  level={2}
+                  style={{
+                    // fontWeight: "bold",
+                    fontSize: 15,
+                  }}
+                >
+                  Sph
+                </Typography.Title>
+              </Col>
+              <Col span={3.5}>
+                <Typography.Title
+                  level={2}
+                  style={{
+                    // fontWeight: "bold",
+                    fontSize: 15,
+                  }}
+                >
+                  Add
+                </Typography.Title>
+              </Col>
+              <Col span={6}>
+                <Typography.Title
+                  level={2}
+                  style={{
+                    // fontWeight: "bold",
+                    fontSize: 15,
+                  }}
+                >
+                  Held Qty.
+                </Typography.Title>
+              </Col>
+              <Col span={6}>
+                <Typography.Title
+                  level={2}
+                  style={{
+                    // fontWeight: "bold",
+                    fontSize: 15,
+                  }}
+                >
+                  Enter Qty.
+                </Typography.Title>
+              </Col>
+              <Col span={5.5}>
+                <Typography.Title
+                  level={2}
+                  style={{
+                    // fontWeight: "bold",
+                    fontSize: 15,
+                  }}
+                >
+                  Price
+                </Typography.Title>
+              </Col>
+            </Row>
+            {dataSource.map((item) => (
+              <Row key={item.key} gutter={16} style={{ marginBottom: "10px" }}>
+                <Col span={3}>
+                  <strong>{item.sph}</strong>
+                </Col>
+                <Col span={3}>
+                  <strong>{item.add}</strong>
+                </Col>
+                <Col span={6}>
+                  <Input
+                    value={item.quantity}
+                    disabled
+                    // style={{ width: "100px" }}
+                  />
+                </Col>
+                <Col span={6}>
+                  <Input
+                    value={item.newQuantity}
+                    onChange={(e) =>
+                      handleNewQuantityChange(item.key, e.target.value)
+                    }
+                    // style={{ width: "100px" }}
+                    placeholder="Enter Quantity"
+                    type="number"
+                    step={0.5}
+                  />
+                </Col>
+                <Col span={6}>
+                  <Input
+                    value={item.price}
+                    onChange={(e) =>
+                      handlePriceChange(item.key, e.target.value)
+                    }
+                    // style={{ width: "100px" }}
+                    placeholder="Enter price"
+                  />
+                </Col>
+              </Row>
+            ))}
+          </Form.Item>
+          <Form.Item>
+            <Row justify="center" style={{ marginTop: "10px" }}>
+              <Col span={11}>
+                <Button
+                  onClick={() => form.submit()}
+                  type="primary"
+                  style={{ width: "100%" }}
+                  loading={loading}
+                >
+                  Add Quantity
+                </Button>
+              </Col>
+            </Row>
+          </Form.Item>
+        </Form>
+      ) : (
+        <Form form={form} onFinish={onFinish}>
+          <Form.Item>
+            <Row>
+              <Col span={2}>
+                <Typography.Title
+                  level={2}
+                  style={{
+                    fontWeight: "bold",
+                    fontSize: 20,
+                    marginBottom: 20,
+                  }}
+                >
+                  Sph
+                </Typography.Title>
+              </Col>
+              <Col span={3}>
+                <Typography.Title
+                  level={2}
+                  style={{
+                    fontWeight: "bold",
+                    fontSize: 20,
+                    marginBottom: 20,
+                  }}
+                >
+                  Addition
+                </Typography.Title>
+              </Col>
+              <Col span={4}>
+                <Typography.Title
+                  level={2}
+                  style={{
+                    fontWeight: "bold",
+                    fontSize: 20,
+                    marginBottom: 20,
+                  }}
+                >
+                  Held Quantity
+                </Typography.Title>
+              </Col>
+              <Col span={4}>
+                <Typography.Title
+                  level={2}
+                  style={{
+                    fontWeight: "bold",
+                    fontSize: 20,
+                    marginBottom: 20,
+                  }}
+                >
+                  Enter Quantity
+                </Typography.Title>
+              </Col>
+              <Col span={4}>
+                <Typography.Title
+                  level={2}
+                  style={{
+                    fontWeight: "bold",
+                    fontSize: 20,
+                    marginBottom: 20,
+                  }}
+                >
+                  Price
+                </Typography.Title>
+              </Col>
+            </Row>
+            {dataSource.map((item) => (
+              <Row key={item.key} gutter={16} style={{ marginBottom: "10px" }}>
+                <Col span={2}>
+                  <strong>{item.sph}</strong>
+                </Col>
+                <Col span={3}>
+                  <strong>{item.add}</strong>
+                </Col>
+                <Col span={4}>
+                  <Input
+                    value={item.quantity}
+                    disabled
+                    style={{ width: "100px" }}
+                  />
+                </Col>
+                <Col span={4}>
+                  <Input
+                    value={item.newQuantity}
+                    onChange={(e) =>
+                      handleNewQuantityChange(item.key, e.target.value)
+                    }
+                    style={{ width: "100px" }}
+                    placeholder="Enter Quantity"
+                    type="number"
+                    step={0.5}
+                  />
+                </Col>
+                <Col span={4}>
+                  <Input
+                    value={item.price}
+                    onChange={(e) =>
+                      handlePriceChange(item.key, e.target.value)
+                    }
+                    style={{ width: "100px" }}
+                    placeholder="Enter price"
+                  />
+                </Col>
+              </Row>
+            ))}
+          </Form.Item>
+          <Form.Item>
+            <Row justify="center" style={{ marginTop: "30px" }}>
+              <Col span={11}>
+                <Button
+                  onClick={() => form.submit()}
+                  type="primary"
+                  style={{ width: 130 }}
+                  loading={loading}
+                >
+                  Add Quantity
+                </Button>
+              </Col>
+            </Row>
+          </Form.Item>
+        </Form>
+      )}
+    </>
   );
 }
 

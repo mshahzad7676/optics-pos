@@ -1,12 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Row, Typography, Card, Col, Space } from "antd";
 import { FundTwoTone, DollarTwoTone, ShopTwoTone } from "@ant-design/icons";
 import Orders from "./Components/Orders";
 import { CapsuleTabs } from "antd-mobile";
+import OrderTableApi from "../../../api/OrderTableApi";
+import { AppContext } from "../../SideNav";
 const { Text } = Typography;
 
 function Sales() {
   const [isMobileView, setIsMobileView] = useState(window.innerWidth < 768);
+  const [orderCount, setOrderCount] = useState(0);
+  const [totalSales, setTotalSales] = useState(0);
+  const [monthlySales, setMonthlySales] = useState(0);
+  const [monthlyOrders, setMonthlyOrders] = useState(0);
+
+  const { store } = useContext(AppContext);
 
   // Handle window resize
   useEffect(() => {
@@ -17,12 +25,42 @@ function Sales() {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  // fetch Orders Total Stats
+  async function fetchOrdersStats() {
+    const response = await OrderTableApi.fetchOrdersCounts(store.s_id);
+
+    if (response) {
+      const { count, totalSales } = response;
+      setOrderCount(count);
+      setTotalSales(totalSales);
+    }
+  }
+
+  // fetch Orders Total Monthly Stats
+  async function fetchMonthlyData() {
+    const response = await OrderTableApi.fetchMonthlySales(store.s_id);
+
+    if (response) {
+      const { totalSales, count } = response;
+      setMonthlySales(totalSales);
+      setMonthlyOrders(count);
+    }
+  }
+
+  useEffect(() => {
+    if (store?.s_id) {
+      fetchOrdersStats();
+      fetchMonthlyData();
+    }
+  }, [store?.s_id]);
+
   return (
     <>
       {isMobileView ? (
         <>
           <CapsuleTabs defaultActiveKey="1">
-            <CapsuleTabs.Tab title="Sales Statistic" key="1">
+            <CapsuleTabs.Tab title="Store Sale " key="1">
               <Card
                 // title={
                 //   <span>
@@ -43,7 +81,7 @@ function Sales() {
                       fontSize: 25,
                     }}
                   >
-                    Rs. 6,32,474
+                    Rs. {totalSales}
                   </Text>
                   <Text
                     style={{
@@ -52,12 +90,12 @@ function Sales() {
                       color: "#8c9097",
                     }}
                   >
-                    THIS MONTH
+                    TOTAL
                   </Text>
                 </Space>
               </Card>
             </CapsuleTabs.Tab>
-            <CapsuleTabs.Tab title="Total Revenue" key="2">
+            <CapsuleTabs.Tab title="Total Sale" key="2">
               <Card
                 // title={
                 //   <span>
@@ -78,7 +116,7 @@ function Sales() {
                       fontSize: 25,
                     }}
                   >
-                    Rs. 2,32,474
+                    Rs. {monthlySales}
                   </Text>
                   <Text
                     style={{
@@ -92,7 +130,7 @@ function Sales() {
                 </Space>
               </Card>{" "}
             </CapsuleTabs.Tab>
-            <CapsuleTabs.Tab title="Total Week Orders" key="3">
+            <CapsuleTabs.Tab title="Store Orders" key="3">
               <Card
                 // title={
                 //   <span>
@@ -113,7 +151,7 @@ function Sales() {
                       fontSize: 25,
                     }}
                   >
-                    22
+                    {orderCount}
                   </Text>
                   <Text
                     style={{
@@ -122,12 +160,12 @@ function Sales() {
                       color: "#8c9097",
                     }}
                   >
-                    THIS WEEK
+                    TOTAL ORDERS
                   </Text>
                 </Space>
               </Card>
             </CapsuleTabs.Tab>
-            <CapsuleTabs.Tab title="Total Month Orders" key="4">
+            <CapsuleTabs.Tab title="Month Orders" key="4">
               <Card
                 // title={
                 //   <span>
@@ -148,7 +186,7 @@ function Sales() {
                       fontSize: 25,
                     }}
                   >
-                    34
+                    {monthlyOrders}
                   </Text>
                   <Text
                     style={{
@@ -166,7 +204,7 @@ function Sales() {
         </>
       ) : (
         <>
-          <Typography.Title
+          {/* <Typography.Title
             level={4}
             style={{
               fontWeight: "bold",
@@ -175,7 +213,7 @@ function Sales() {
             }}
           >
             Sales
-          </Typography.Title>
+          </Typography.Title> */}
           <Row gutter={16} style={{ marginBottom: 20 }}>
             <Col span={6}>
               <Card
@@ -185,7 +223,7 @@ function Sales() {
                       twoToneColor="#52c41a"
                       style={{ marginRight: 8 }}
                     />
-                    Sales Statistics
+                    Store Sale
                   </span>
                 }
                 bordered={false}
@@ -198,7 +236,7 @@ function Sales() {
                       fontSize: 25,
                     }}
                   >
-                    Rs. 6,32,474
+                    Rs. {totalSales}
                   </Text>
                   <Text
                     style={{
@@ -207,7 +245,7 @@ function Sales() {
                       color: "#8c9097",
                     }}
                   >
-                    THIS MONTH
+                    TOTAL SALE
                   </Text>
                 </Space>
               </Card>
@@ -220,7 +258,7 @@ function Sales() {
                       twoToneColor="#52c41a"
                       style={{ marginRight: 8 }}
                     />
-                    Total Revenue
+                    Total Sale
                   </span>
                 }
                 bordered={false}
@@ -233,7 +271,7 @@ function Sales() {
                       fontSize: 25,
                     }}
                   >
-                    Rs. 4,32,474
+                    Rs. {monthlySales}
                   </Text>
                   <Text
                     style={{
@@ -255,7 +293,7 @@ function Sales() {
                       twoToneColor="#52c41a"
                       style={{ marginRight: 8 }}
                     />
-                    Total Order
+                    Store Orders
                   </span>
                 }
                 bordered={false}
@@ -268,7 +306,7 @@ function Sales() {
                       fontSize: 25,
                     }}
                   >
-                    110
+                    {orderCount}
                   </Text>
                   <Text
                     style={{
@@ -277,7 +315,7 @@ function Sales() {
                       color: "#8c9097",
                     }}
                   >
-                    THIS MONTH
+                    TOTAL ORDERS
                   </Text>
                 </Space>
               </Card>
@@ -290,7 +328,7 @@ function Sales() {
                       twoToneColor="#52c41a"
                       style={{ marginRight: 8 }}
                     />
-                    Total Order
+                    Orders
                   </span>
                 }
                 bordered={false}
@@ -303,7 +341,7 @@ function Sales() {
                       fontSize: 25,
                     }}
                   >
-                    45
+                    {monthlyOrders}
                   </Text>
                   <Text
                     style={{
@@ -312,7 +350,7 @@ function Sales() {
                       color: "#8c9097",
                     }}
                   >
-                    THIS WEEK
+                    THIS MONTH
                   </Text>
                 </Space>
               </Card>

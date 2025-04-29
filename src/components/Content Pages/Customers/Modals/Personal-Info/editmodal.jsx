@@ -40,7 +40,7 @@ function EditCustomer({ open, onOk, onCancel, customer }) {
               </Form.Item>
             </Col>
 
-            <Col span={12}>
+            {/* <Col span={12}>
               <Form.Item
                 label="Phone Number"
                 name="phone"
@@ -53,6 +53,28 @@ function EditCustomer({ open, onOk, onCancel, customer }) {
                 ]}
               >
                 <Input placeholder="Enter Phone No." />
+              </Form.Item>
+            </Col> */}
+            <Col span={12}>
+              <Form.Item
+                label="Phone Number"
+                name="phone"
+                rules={[
+                  { required: true, message: "Please Enter the Phone No." },
+                  // {
+                  //   pattern: /^[0-9]+$/,
+                  //   message: "Please enter a valid phone number",
+                  // },
+                ]}
+                normalize={(value) => {
+                  // Replace leading 0 with +92
+                  if (value.startsWith("0")) {
+                    return value.replace(/^0/, "+92");
+                  }
+                  return value;
+                }}
+              >
+                <Input maxLength={13} placeholder="030--------" />
               </Form.Item>
             </Col>
             <Col span={12}>

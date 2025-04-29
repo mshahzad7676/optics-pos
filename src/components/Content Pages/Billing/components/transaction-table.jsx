@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Table, Button, Modal, Tag } from "antd";
+import { Table, Button, Modal, Tag, Typography, Flex } from "antd";
 import {
   DeleteOutlined,
   EditOutlined,
@@ -23,7 +23,6 @@ function TransactionTable({ searchTerm, selectedCustomer }) {
   };
 
   const [transaction, setTransaction] = useState([]);
-  const [customerCount, setCustomerCount] = useState(0);
   const { user, store } = useContext(AppContext);
   const [selectedTransaction, setSelectedTransaction] = useState(null);
 
@@ -68,24 +67,25 @@ function TransactionTable({ searchTerm, selectedCustomer }) {
     // navigate(`/orderdetails`, { state: { customer } });
   };
 
-  // const handleDelete = async (customerId) => {
-  //   const isDeleted = await CustomerAPI.deleteCustomer(customerId);
-  //   if (isDeleted) {
-  //     setTranscation(customers.filter((customer) => customer.id !== customerId));
-  //   }
-  // };
+  const handleDelete = async (transId) => {
+    const isDeleted = await TransactionApi.deleteTransaction(transId);
+    if (isDeleted) {
+      setTransaction(transaction.filter((trans) => trans.id !== transId));
+    }
+  };
   const { confirm } = Modal;
-  // const showDeleteConfirm = (customerId) => {
-  //   confirm({
-  //     title: "Are you sure delete this Customer?",
-  //     icon: <ExclamationCircleFilled />,
-  //     okText: "Yes",
-  //     okType: "danger",
-  //     cancelText: "No",
-  //     onOk: () => handleDelete(customerId),
-  //     onCancel() {},
-  //   });
-  // };
+  const showDeleteConfirm = (transId) => {
+    confirm({
+      title: "Are you sure delete this Transaction?",
+      icon: <ExclamationCircleFilled />,
+      okText: "Yes",
+      okType: "danger",
+      cancelText: "No",
+      maskClosable: true,
+      onOk: () => handleDelete(transId),
+      onCancel() {},
+    });
+  };
 
   const columns = [
     {
@@ -96,19 +96,25 @@ function TransactionTable({ searchTerm, selectedCustomer }) {
       title: "Order ID",
       dataIndex: "order_id",
       render: (_, record) => (
-        <Button
-          type="link"
-          onClick={() => {
-            if (record.order_id) {
-              handleOrderViewDetails(record.order_id);
-            }
-          }}
-          style={{ padding: 0, height: "auto" }}
-        >
-          {record.order_id || "N/A"}
-        </Button>
+        <Flex vertical align="start" justify="start">
+          <Button
+            type="link"
+            onClick={() => {
+              if (record.order_id) {
+                handleOrderViewDetails(record.order_id);
+              }
+            }}
+            style={{ padding: 0, height: "auto" }}
+          >
+            {record.order_id || "N/A"}
+          </Button>
+          <Typography.Text style={{ fontSize: "12px" }}>
+            {record.orders?.order_date}
+          </Typography.Text>
+        </Flex>
       ),
     },
+
     {
       title: "Customer Name",
       dataIndex: ["customers", "name"],
@@ -169,20 +175,15 @@ function TransactionTable({ searchTerm, selectedCustomer }) {
           >
             <EditOutlined />
           </Button>
-          {/* <Button
-            color="primary"
-            variant="filled"
-            size="small"
-            onClick={() => handleAddVisitClick(record.id)}
-          >
-            <PlusSquareTwoTone twoToneColor="#52c41a" />
-          </Button> */}
 
           <Button
             color="danger"
             variant="filled"
             size="small"
-            // onClick={() => showDeleteConfirm(record.id)}
+            onClick={() => {
+              console.log("Delete button clicked for ID:", record.id);
+              showDeleteConfirm(record.id);
+            }}
           >
             <DeleteOutlined />
           </Button>
@@ -193,11 +194,16 @@ function TransactionTable({ searchTerm, selectedCustomer }) {
 
   return (
     <>
-      {/* <h4>Total Customers: {customerCount}</h4> */}
-      <Table columns={columns} dataSource={transaction} size="middle" />
+      <Table
+        columns={columns}
+        dataSource={transaction}
+        scroll={{ y: 400 }}
+        pagination={false}
+        size="middle"
+      />
       <TransactionViewModal
         open={isModalOpen}
-        transaction={selectedTransaction} // Pass the selected transaction
+        transaction={selectedTransaction}
         onModalClose={handleModalClose}
       ></TransactionViewModal>
     </>

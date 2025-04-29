@@ -1,3 +1,4 @@
+import { message } from "antd";
 import BaseApi from "./BaseApi";
 class AuthServieApi extends BaseApi {
   // signUp User
@@ -8,12 +9,27 @@ class AuthServieApi extends BaseApi {
         await this.supabase.auth.signUp({
           email,
           password,
+          // options: {
+          //   emailRedirectTo: `http://localhost:3000/userInfo/${signUpData?.user?.id}`,
+          // },
+          options: {
+            emailRedirectTo: "http://localhost:3000/userInfo",
+          },
         });
       if (signUpError) throw signUpError;
 
+      // Check if the user needs to confirm their email
+      if (signUpData.user && !signUpData.user.email_confirmed_at) {
+        console.log(
+          "Please check your email to verify your account before logging in."
+        );
+      } else {
+        console.log("User signed up and email is already confirmed.");
+      }
+
       // Get the user ID (Supabase may return it in the session data after sign-up)
       const userId = signUpData.user?.id;
-      if (!userId) throw new Error("User ID not found after sign-up.");
+      if (!userId) throw new Error("User ID not Found after sign-up.");
 
       //Create a store associated with the new user
       const { data: storeData, error: storeError } = await this.supabase
@@ -52,6 +68,28 @@ class AuthServieApi extends BaseApi {
         error.message
       );
       return { data: null, error };
+    }
+  }
+
+  //Resend Email Confirmation
+
+  static async resendConfirmationEmail(email) {
+    try {
+      const { error } = await this.supabase.auth.resend({
+        type: "signup",
+        email,
+      });
+
+      if (error) throw error;
+
+      console.log("Confirmation email resent successfully.");
+      return {
+        success: true,
+        message: "Confirmation email resent successfully.",
+      };
+    } catch (error) {
+      console.error("Error resending confirmation email:", error.message);
+      return { success: false, message: error.message };
     }
   }
 
@@ -99,7 +137,11 @@ class AuthServieApi extends BaseApi {
         email,
         password,
       });
-      if (error) throw error;
+
+      if (error) {
+        return { data: null, error };
+      }
+
       return { data, error: null };
     } catch (error) {
       console.error("Sign in error:", error.message);
@@ -140,7 +182,7 @@ class AuthServieApi extends BaseApi {
       const { data, error } = await this.supabase.auth.resetPasswordForEmail(
         email,
         {
-          redirectTo: "http://localhost:3000/SetNewPassword", // Ensure it matches your frontend route
+          redirectTo: "http://localhost:3000/SetNewPassword",
         }
       );
       if (error) throw error;

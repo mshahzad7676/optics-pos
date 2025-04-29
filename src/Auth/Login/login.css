@@ -18,7 +18,7 @@
 
 .screen-1 {
   background: hsl(213deg 85% 97%);
-  padding: 2em;                  
+  padding: 2em;
   border-radius: 20px;
   box-shadow: 0 0 2em hsl(231deg 62% 94%);
   width: 100%;
@@ -44,7 +44,7 @@
 }
 .signup-footer {
   text-align: center;
-  font-size: 1.5em;
+  font-size: 1em;
   color: hsl(0deg 0% 37%);
   padding-top: 1em;
 }

@@ -1,0 +1,13 @@
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #shortage-modal-content,
+  #shortage-modal-content * {
+    visibility: visible;
+  }
+}
+
+#shortage-modal-content {
+  margin-bottom: 10px;
+}

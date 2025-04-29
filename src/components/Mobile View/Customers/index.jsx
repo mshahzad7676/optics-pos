@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Card, Divider, List, Modal, SpinLoading, Toast } from "antd-mobile";
+import { Card, Modal, SpinLoading, Toast } from "antd-mobile";
 import CustomerAPI from "../../../api/CustomerApi";
 import { AppContext } from "../../SideNav";
 import { Tag } from "antd";
@@ -24,10 +24,10 @@ function CustomerMobile({ searchTerm }) {
   const navigate = useNavigate();
 
   const handleAddVisitClick = (id) => {
-    navigate(`/retail/Customer/${id}/order/`);
+    navigate(`/retail/customer/${id}/order/`);
   };
   const handleAddVisitWholeSaleClick = (id) => {
-    navigate(`/wholesale/Customer/${id}/order/`);
+    navigate(`/wholesale/customer/${id}/order/`);
   };
 
   const handleViewClick = (id) => {
@@ -44,7 +44,7 @@ function CustomerMobile({ searchTerm }) {
         setCustomers(data);
         setCustomerCount(count);
       } else {
-        setCustomers([]); // No data found
+        setCustomers([]); // No data Found
       }
     } catch (error) {
       console.error("Failed to fetch customers:", error);
@@ -122,7 +122,21 @@ function CustomerMobile({ searchTerm }) {
       <h3>Customers ({customerCount})</h3>
 
       {loading ? (
-        <div style={{ textAlign: "center", padding: "20px" }}>
+        <div
+          style={{
+            position: "fixed",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            width: "100vw",
+            height: "100vh",
+            background: "rgba(255, 255, 255, 0.8)",
+            zIndex: 9999,
+          }}
+        >
           <SpinLoading color="primary" />
         </div>
       ) : customers.length > 0 ? (
@@ -143,12 +157,14 @@ function CustomerMobile({ searchTerm }) {
                 backgroundColor: "#fff",
               }}
             >
+              {/* Customer Info */}
               <div
                 style={{
                   display: "flex",
                   flexDirection: "column",
                   justifyContent: "space-between",
                   width: "100%",
+                  marginBottom: 10,
                   // alignItems: "center",
                 }}
               >
@@ -215,7 +231,7 @@ function CustomerMobile({ searchTerm }) {
                 </div>
                 {/* </div> */}
               </div>
-              <Divider style={{ margin: "5px 0 10px 0" }}></Divider>
+              {/* <Divider style={{ margin: "5px 0 10px 0" }}></Divider> */}
 
               {/* Customer of  */}
               <div style={{ display: "flex", justifyContent: "center" }}>
@@ -230,7 +246,7 @@ function CustomerMobile({ searchTerm }) {
                   {customer.store}
                 </Tag>
               </div>
-
+              {/* Actions */}
               <div
                 style={{
                   flex: 1,
@@ -296,7 +312,7 @@ function CustomerMobile({ searchTerm }) {
         </>
       ) : (
         <p style={{ textAlign: "center", color: "gray" }}>
-          No customers found.
+          No customers Found.
         </p>
       )}
     </div>

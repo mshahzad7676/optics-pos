@@ -80,8 +80,8 @@ function AddFrameModal({ frameData, open, onModalClose, store }) {
           layout="vertical"
           style={{ padding: "20px" }}
         >
-          <Row gutter={16}>
-            <Col span={12}>
+          <Row gutter={[16, 16]}>
+            <Col xs={12} sm={12}>
               <Form.Item
                 label="Frame Picture"
                 name="pic"
@@ -103,7 +103,7 @@ function AddFrameModal({ frameData, open, onModalClose, store }) {
                 </Upload>
               </Form.Item>
             </Col>
-            <Col span={12}>
+            <Col xs={12} sm={12}>
               <Form.Item
                 label="Frame Category"
                 name="category"
@@ -124,14 +124,10 @@ function AddFrameModal({ frameData, open, onModalClose, store }) {
                     { value: "Kids", label: "Kids" },
                     { value: "Unisex", label: "Unisex" },
                   ]}
-                  style={{
-                    fontSize: "14px",
-                    width: 210,
-                  }}
                 />
               </Form.Item>
             </Col>
-            <Col span={12}>
+            <Col xs={12} sm={12}>
               <Form.Item
                 label="Frame Shape"
                 name="shape"
@@ -151,14 +147,10 @@ function AddFrameModal({ frameData, open, onModalClose, store }) {
                     { value: "Cat Eye", label: "Cat Eye" },
                     { value: "Rectangle", label: "Rectangle" },
                   ]}
-                  style={{
-                    fontSize: "14px",
-                    width: 210,
-                  }}
                 />
               </Form.Item>
             </Col>
-            <Col span={12}>
+            <Col xs={12} sm={12}>
               <Form.Item
                 label="Brand"
                 name="brand"
@@ -172,7 +164,7 @@ function AddFrameModal({ frameData, open, onModalClose, store }) {
                 <Input placeholder="Enter Brand Name" />
               </Form.Item>
             </Col>
-            <Col span={12}>
+            <Col xs={12} sm={12}>
               <Form.Item
                 label="Quantity"
                 name="quantity"
@@ -183,17 +175,10 @@ function AddFrameModal({ frameData, open, onModalClose, store }) {
                   },
                 ]}
               >
-                <InputNumber
-                  min={1}
-                  max={100}
-                  defaultValue={0}
-                  style={{
-                    width: 210,
-                  }}
-                />
+                <InputNumber min={1} max={100} style={{ width: "100%" }} />
               </Form.Item>
             </Col>
-            <Col span={12}>
+            <Col xs={12} sm={12}>
               <Form.Item
                 label="Price"
                 name="price"

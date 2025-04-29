@@ -201,7 +201,7 @@ function Customers() {
             <Button
               onClick={showModal}
               type="primary"
-              shape="round"
+              shape="round-large"
               icon={<PlusCircleOutlined />}
             >
               Add Customer

@@ -67,7 +67,7 @@ export default function OrderItem({
       }
     >
       <Row gutter={16}>
-        <Col span={7}>
+        <Col span={12}>
           <Form.Item label="Order Category" name={[name, "category"]}>
             <Select
               // showSearch

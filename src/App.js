@@ -1,4 +1,4 @@
-import MainPage from "./components/SideNav";
+import MainPage, { AppContext } from "./components/SideNav";
 import {
   BrowserRouter as Router,
   Route,
@@ -16,6 +16,10 @@ import AuthServieApi from "./api/AuthApi";
 import UserInfo from "./Auth/SignUp/userInfo";
 import MemberStores from "./components/Content Pages/Employees/Member Stores";
 import StoreInfo from "./Auth/SignUp/storeInfo";
+import { message } from "antd";
+import { useContext } from "react";
+import UserApi from "./api/UserApi";
+import MemberApi from "./api/Member/MemberApi";
 
 // Protected route wrapper
 function ProtectedRoute({ isAuthenticated, children }) {
@@ -28,39 +32,11 @@ function App() {
   const [password, setPassword] = useState("");
   const [members, setMembers] = useState([]);
   const [stores, setStores] = useState([]);
+  const [user, setUser] = useState([]);
+  const [memberData, setMemberData] = useState([]);
+  const [resendCooldown, setResendCooldown] = useState(0);
 
   const navigate = useNavigate();
-
-  // useEffect(() => {
-  //   // Check for the authentication state in localStorage on component load
-  //   const storedAuthState = localStorage.getItem("isAuthenticated");
-  //   if (storedAuthState === "true") {
-  //     setIsAuthenticated(true);
-  //   }
-  // }, []);
-
-  // useEffect(() => {
-  //   const handleGetUser = async () => {
-  //     const user = await AuthServieApi.getCurrentUser();
-  //     if (user) {
-  //       setIsAuthenticated(true);
-  //     } else {
-  //       setIsAuthenticated(false);
-  //     }
-  //   };
-  //   handleGetUser();
-  // }, []);
-
-  // const handleSignUp = async () => {
-  //   const { error } = await AuthServieApi.signUp(email, password);
-  //   if (error) {
-  //     console.log(error.message);
-  //     return false;
-  //   } else {
-  //     console.log("Sign-up successful!");
-  //     return true;
-  //   }
-  // };
 
   const handleSignUp = async () => {
     // const storeDescription = "Default store description";
@@ -71,7 +47,8 @@ function App() {
     );
 
     if (error) {
-      console.log("Error during sign-up:", error.message);
+      // console.log("Error during sign-up:", error.message);
+      message.error("This Email is already registered. Please Log in instead.");
       return { data, success: false };
     } else {
       console.log("Sign-up successful! User and store created:", data);
@@ -79,14 +56,39 @@ function App() {
     }
   };
 
-  // const handleUpdateMember = async (updatedMember) => {
-  //   await AuthServieApi.updateMember(updatedMember);
+  const handleResendEmail = async () => {
+    if (resendCooldown > 0) {
+      alert(`Please wait ${resendCooldown} seconds before resending.`);
+      return;
+    }
 
-  //   const updatedMembers = members.map((member) =>
-  //     member.id === updatedMember.id ? updatedMember : member
-  //   );
-  //   setMembers(updatedMembers);
-  // };
+    const { data, error } = await AuthServieApi.resendConfirmationEmail(email);
+
+    if (error) {
+      console.log("Error resending confirmation email:", error.message);
+
+      if (error.code === "over_email_send_rate_limit") {
+        setResendCooldown(60);
+      }
+
+      return { data, success: false };
+    } else {
+      console.log("Confirmation email resent successfully:", data);
+
+      setResendCooldown(60);
+
+      return { data, success: true };
+    }
+  };
+
+  useEffect(() => {
+    if (resendCooldown > 0) {
+      const timer = setTimeout(() => {
+        setResendCooldown((prev) => prev - 1);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [resendCooldown]);
 
   const handleUpdateMember = async (updatedMember) => {
     try {
@@ -165,20 +167,20 @@ function App() {
   };
 
   const handleSignIn = async () => {
-    const { error } = await AuthServieApi.signIn(email, password);
-    if (error) {
-      console.log(error.message);
-    } else {
-      console.log("Logged in successfully!");
-      setIsAuthenticated(true);
+    const { data, error } = await AuthServieApi.signIn(email, password);
 
-      // const user = await AuthServieApi.getCurrentUser();
-      // if (user && user.id) {
-      // navigate(`/user/${user.id}`);
-      // }
-      // navigate("/");
+    if (error) {
+      if (error.message.toLowerCase().includes("email not confirmed")) {
+        message.error(
+          "Your email is not confirmed. Please verify it before logging in."
+        );
+      } else {
+        message.error(`Error: ${error.message}`);
+      }
+    } else {
+      message.success("Logged in successfully!");
+      setIsAuthenticated(true);
       navigate("/memberstores");
-      // localStorage.setItem("isAuthenticated", "true");
     }
   };
 
@@ -194,6 +196,34 @@ function App() {
       navigate("/login");
     }
   };
+
+  const fetchUserAndMemberInfo = async () => {
+    try {
+      const authUser = await UserApi.fetchUser();
+
+      if (authUser) {
+        setUser(authUser);
+
+        // Fetch member info only after authUser is available
+        const storeMember = await MemberApi.fetchallMembers(authUser.id);
+
+        if (storeMember) {
+          setMemberData(storeMember.memberRecord?.[0]);
+        }
+      } else {
+        console.error("No user found.");
+      }
+    } catch (error) {
+      console.error(
+        "Unexpected error in fetchUserAndMemberInfo:",
+        error.message
+      );
+    }
+  };
+
+  useEffect(() => {
+    fetchUserAndMemberInfo();
+  }, []);
 
   return (
     // <Router>
@@ -226,13 +256,21 @@ function App() {
             password={password}
             setPassword={setPassword}
             onSignUp={handleSignUp}
+            onResendEmail={handleResendEmail}
+            resendCooldown={resendCooldown}
           />
         }
       />
       <Route
-        path="/userInfo/:userId"
-        // path="/userInfo/"
-        element={<UserInfo updateMember={handleUpdateMember}></UserInfo>}
+        // path="/userInfo/:userId"
+        path="/userInfo/"
+        element={
+          <UserInfo
+            userId={user.id}
+            memberId={memberData?.id}
+            updateMember={handleUpdateMember}
+          ></UserInfo>
+        }
       ></Route>
       <Route
         path="/storeInfo/:userId"

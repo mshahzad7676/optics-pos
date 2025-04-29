@@ -26,6 +26,17 @@ function WholeSaleRow({ key, orderItem, addRow, name, form, onDelete }) {
   const [updatedInventory, setUpdatedInventory] = useState({});
   const [editFormData, setEditFormData] = useState({});
   const [prevInvItem, setPrevInvItem] = useState({});
+  const [isMobileView, setIsMobileView] = useState(window.innerWidth < 768);
+
+  // Handle window resize
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobileView(window.innerWidth < 768);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   // console.log(editFormData, "updated");
 
@@ -101,8 +112,8 @@ function WholeSaleRow({ key, orderItem, addRow, name, form, onDelete }) {
         orderItem &&
         selectedLensType === originalInventoryItem.glass_type &&
         selectedSph === String(originalInventoryItem.sph) &&
-        selectedCyl == originalInventoryItem.cyl &&
-        selectedAdd == originalInventoryItem.addition
+        selectedCyl === originalInventoryItem.cyl &&
+        selectedAdd === originalInventoryItem.addition
       ) {
         form.setFieldValue(
           ["order_items", name, "glass", "quantity"],
@@ -193,7 +204,8 @@ function WholeSaleRow({ key, orderItem, addRow, name, form, onDelete }) {
   };
 
   const handleQuantityChange = (newQuantity) => {
-    if (itemData?.[0]?.price && itemData?.[0]?.held_quantity) {
+    // console.log(itemData);
+    if (itemData?.[0]?.price || itemData?.[0]?.held_quantity) {
       const unitPrice = itemData[0].price;
       let heldQuantity = itemData[0].held_quantity;
 
@@ -215,8 +227,8 @@ function WholeSaleRow({ key, orderItem, addRow, name, form, onDelete }) {
       // Update the edit form state
       handleFieldChange("quantity", newQuantity);
 
-      console.log("Previous Quantity:", preQuantity);
-      console.log("New Quantity:", newQuantity);
+      // console.log("Previous Quantity:", preQuantity);
+      // console.log("New Quantity:", newQuantity);
       // console.log("difference:", quantityDifference);
       // console.log("Held Quantity:", heldQuantity);
     }
@@ -248,152 +260,327 @@ function WholeSaleRow({ key, orderItem, addRow, name, form, onDelete }) {
 
   return (
     <>
-      <Row gutter={8}>
-        <Col span={4} style={{ display: "none" }}>
-          <Form.Item name={[name, "glass", "order_item_id"]}>
-            <Input type="hidden" value={orderItem?.glass?.order_item_id} />
-          </Form.Item>
-        </Col>
-        <Col span={5}>
-          <Form.Item
-            label="Lense Type"
-            // name="order_items"
-            // name={["order_items", index, "glass_type"]}
-            name={[name, "glass", "type"]}
-            labelCol={{ span: 24 }}
-            wrapperCol={{ span: 24 }}
-            rules={[{ required: true, message: "Please Select Type" }]}
-          >
-            <Select
-              allowClear
-              showSearch
-              placeholder="Select Item"
-              optionFilterProp="label"
-              options={glassItemType}
-              // onChange={handleLensTypeChange}
-              onChange={(value) => {
-                handleLensTypeChange(value);
-                handleFieldChange("type", value);
-              }}
-            />
-          </Form.Item>
-        </Col>
-        <Col span={3}>
-          <Form.Item
-            label="Sph"
-            // name={["order_items", index, "sph"]}
-            name={[name, "glass", "sph"]}
-            labelCol={{ span: 24 }}
-            wrapperCol={{ span: 24 }}
-          >
-            <SphNumberSelector
-              //  onChange={handleLensSphChange}
-              onChange={(value) => {
-                handleLensSphChange(value);
-                handleFieldChange("sph", value);
-              }}
-            />
-          </Form.Item>
-        </Col>
+      {isMobileView ? (
+        <>
+          {/* <Row gutter={8}> */}
+          <Col span={4} style={{ display: "none" }}>
+            <Form.Item name={[name, "glass", "order_item_id"]}>
+              <Input type="hidden" value={orderItem?.glass?.order_item_id} />
+            </Form.Item>
+          </Col>
+          {/* Lense Type */}
+          <Col span={24}>
+            <Form.Item
+              label="Lense Type"
+              // name="order_items"
+              // name={["order_items", index, "glass_type"]}
+              name={[name, "glass", "glass_type"]}
+              labelCol={{ span: 24 }}
+              wrapperCol={{ span: 24 }}
+              rules={[{ required: true, message: "Please Select Type" }]}
+            >
+              <Select
+                allowClear
+                showSearch
+                placeholder="Select Item"
+                optionFilterProp="label"
+                options={glassItemType}
+                // onChange={handleLensTypeChange}
+                onChange={(value) => {
+                  handleLensTypeChange(value);
+                  handleFieldChange("type", value);
+                }}
+              />
+            </Form.Item>
+          </Col>
+          <Row gutter={16}>
+            {/* Sph */}
+            <Col span={8}>
+              <Form.Item
+                label="Sph"
+                // name={["order_items", index, "sph"]}
+                name={[name, "glass", "sph"]}
+                labelCol={{ span: 24 }}
+                wrapperCol={{ span: 24 }}
+              >
+                <SphNumberSelector
+                  //  onChange={handleLensSphChange}
+                  onChange={(value) => {
+                    handleLensSphChange(value);
+                    handleFieldChange("sph", value);
+                  }}
+                />
+              </Form.Item>
+            </Col>
 
-        <Col span={3}>
-          <Form.Item
-            label="Cyl"
-            // name={["order_items", index, "cyl"]}
-            name={[name, "glass", "cyl"]}
-            labelCol={{ span: 24 }}
-            wrapperCol={{ span: 24 }}
-          >
-            <CylNumberSelector
-              // onChange={handleLensCylChange}
-              onChange={(value) => {
-                handleLensCylChange(value);
-                handleFieldChange("cyl", value);
-              }}
-            />
-          </Form.Item>
-        </Col>
-        <Col span={3}>
-          <Form.Item
-            label="Add."
-            labelCol={{ span: 24 }}
-            wrapperCol={{ span: 24 }}
-            // name={["order_items", index, "addition"]}
-            name={[name, "glass", "addition"]}
-          >
-            <AddtitionNumList
-              // onChange={handleLensAddChange}
-              onChange={(value) => {
-                handleLensAddChange(value);
-                handleFieldChange("addition", value);
-              }}
-            />
-          </Form.Item>
-        </Col>
-        <Col span={4}>
-          <Form.Item
-            style={{ margin: 0 }}
-            label="Quantity"
-            labelCol={{ span: 24 }}
-            wrapperCol={{ span: 24 }}
-            // name={["order_items", index, "quantity"]}
-            name={[name, "glass", "quantity"]}
-          >
-            <InputNumber
-              step={0.5}
-              placeholder="Enter Quantity"
-              style={{ width: "100%" }}
-              suffix="Pair"
-              onChange={handleQuantityChange}
-            />
-          </Form.Item>
-          <Typography.Text style={{ fontSize: "12px" }}>
-            <strong>Held Quantity: </strong>
-            {itemData?.[0]?.held_quantity}
-          </Typography.Text>
-          <Typography.Text style={{ fontSize: "12px" }}>
-            <strong> Quantity: </strong>
-            {updatedInventory?.held_quantity}
-          </Typography.Text>
-        </Col>
-        <Col span={3}>
-          <Form.Item
-            label="Price"
-            labelCol={{ span: 24 }}
-            wrapperCol={{ span: 24 }}
-            // name={["order_items", index, "price"]}
-            name={[name, "glass", "price"]}
-            style={{ margin: 0 }}
-          >
-            <Input placeholder="Enter Price" />
-          </Form.Item>
-          <Typography.Text style={{ fontSize: "12px" }}>
-            <strong>Unit Price: </strong>
-            {itemData?.[0]?.price}
-          </Typography.Text>
-        </Col>
-        <Col style={{ marginLeft: 10 }}>
-          <Form.Item style={{ marginTop: 40 }}>
-            <Button
-              color="primary"
-              variant="filled"
-              onClick={addRow}
-              icon={<PlusSquareTwoTone twoToneColor="#52c41a" />}
-            ></Button>
-          </Form.Item>
-        </Col>
-        <Col>
-          <Form.Item style={{ marginTop: 40 }}>
-            <Button
-              color="danger"
-              variant="filled"
-              // onClick={() => removeRow(index)}
-              onClick={onDelete}
-              icon={<DeleteOutlined />}
-            />
-          </Form.Item>
-        </Col>
-      </Row>
+            {/* Cyl */}
+            <Col span={8}>
+              <Form.Item
+                label="Cyl"
+                // name={["order_items", index, "cyl"]}
+                name={[name, "glass", "cyl"]}
+                labelCol={{ span: 24 }}
+                wrapperCol={{ span: 24 }}
+              >
+                <CylNumberSelector
+                  // onChange={handleLensCylChange}
+                  onChange={(value) => {
+                    handleLensCylChange(value);
+                    handleFieldChange("cyl", value);
+                  }}
+                />
+              </Form.Item>
+            </Col>
+
+            {/* Addition */}
+            <Col span={8}>
+              <Form.Item
+                label="Add."
+                labelCol={{ span: 24 }}
+                wrapperCol={{ span: 24 }}
+                // name={["order_items", index, "addition"]}
+                name={[name, "glass", "addition"]}
+              >
+                <AddtitionNumList
+                  // onChange={handleLensAddChange}
+                  onChange={(value) => {
+                    handleLensAddChange(value);
+                    handleFieldChange("addition", value);
+                  }}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row gutter={16}>
+            {/* Quantity */}
+            <Col span={12}>
+              <Form.Item
+                style={{ margin: 0 }}
+                label="Quantity"
+                labelCol={{ span: 24 }}
+                wrapperCol={{ span: 24 }}
+                // name={["order_items", index, "quantity"]}
+                name={[name, "glass", "quantity"]}
+              >
+                <InputNumber
+                  step={0.5}
+                  type="number"
+                  placeholder="Enter Quantity"
+                  style={{ width: "100%" }}
+                  suffix="Pair"
+                  min={0}
+                  onChange={handleQuantityChange}
+                />
+              </Form.Item>
+              <Typography.Text style={{ fontSize: "12px" }}>
+                <strong>Held Quantity: </strong>
+                {itemData?.[0]?.held_quantity}
+              </Typography.Text>
+              <br></br>
+              <Typography.Text style={{ fontSize: "12px" }}>
+                <strong> Left Quantity: </strong>
+                {updatedInventory?.held_quantity}
+              </Typography.Text>
+            </Col>
+
+            {/* Price */}
+            <Col span={12}>
+              <Form.Item
+                label="Price"
+                labelCol={{ span: 24 }}
+                wrapperCol={{ span: 24 }}
+                // name={["order_items", index, "price"]}
+                name={[name, "glass", "price"]}
+                style={{ margin: 0 }}
+              >
+                <Input placeholder="Enter Price" />
+              </Form.Item>
+              <Typography.Text style={{ fontSize: "12px" }}>
+                <strong>Unit Price: </strong>
+                {itemData?.[0]?.price}
+              </Typography.Text>
+            </Col>
+          </Row>
+
+          <Row gutter={16} justify="center" align="middle">
+            {/* Actions */}
+
+            {/* Plus Button */}
+            <Col style={{ marginLeft: 10 }}>
+              <Form.Item style={{ marginTop: 40 }}>
+                <Button
+                  color="primary"
+                  variant="filled"
+                  onClick={addRow}
+                  icon={<PlusSquareTwoTone twoToneColor="#52c41a" />}
+                ></Button>
+              </Form.Item>
+            </Col>
+
+            {/* Delete Button*/}
+            <Col>
+              <Form.Item style={{ marginTop: 40 }}>
+                <Button
+                  color="danger"
+                  variant="filled"
+                  // onClick={() => removeRow(index)}
+                  onClick={onDelete}
+                  icon={<DeleteOutlined />}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+        </>
+      ) : (
+        <>
+          <Row gutter={8}>
+            <Col span={4} style={{ display: "none" }}>
+              <Form.Item name={[name, "glass", "order_item_id"]}>
+                <Input type="hidden" value={orderItem?.glass?.order_item_id} />
+              </Form.Item>
+            </Col>
+            <Col span={5}>
+              <Form.Item
+                label="Lense Type"
+                // name="order_items"
+                // name={["order_items", index, "glass_type"]}
+                name={[name, "glass", "type"]}
+                labelCol={{ span: 24 }}
+                wrapperCol={{ span: 24 }}
+                rules={[{ required: true, message: "Please Select Type" }]}
+              >
+                <Select
+                  allowClear
+                  showSearch
+                  placeholder="Select Item"
+                  optionFilterProp="label"
+                  options={glassItemType}
+                  // onChange={handleLensTypeChange}
+                  onChange={(value) => {
+                    handleLensTypeChange(value);
+                    handleFieldChange("type", value);
+                  }}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={3}>
+              <Form.Item
+                label="Sph"
+                // name={["order_items", index, "sph"]}
+                name={[name, "glass", "sph"]}
+                labelCol={{ span: 24 }}
+                wrapperCol={{ span: 24 }}
+              >
+                <SphNumberSelector
+                  //  onChange={handleLensSphChange}
+                  onChange={(value) => {
+                    handleLensSphChange(value);
+                    handleFieldChange("sph", value);
+                  }}
+                />
+              </Form.Item>
+            </Col>
+
+            <Col span={3}>
+              <Form.Item
+                label="Cyl"
+                // name={["order_items", index, "cyl"]}
+                name={[name, "glass", "cyl"]}
+                labelCol={{ span: 24 }}
+                wrapperCol={{ span: 24 }}
+              >
+                <CylNumberSelector
+                  // onChange={handleLensCylChange}
+                  onChange={(value) => {
+                    handleLensCylChange(value);
+                    handleFieldChange("cyl", value);
+                  }}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={3}>
+              <Form.Item
+                label="Add."
+                labelCol={{ span: 24 }}
+                wrapperCol={{ span: 24 }}
+                // name={["order_items", index, "addition"]}
+                name={[name, "glass", "addition"]}
+              >
+                <AddtitionNumList
+                  // onChange={handleLensAddChange}
+                  onChange={(value) => {
+                    handleLensAddChange(value);
+                    handleFieldChange("addition", value);
+                  }}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={4}>
+              <Form.Item
+                style={{ margin: 0 }}
+                label="Quantity"
+                labelCol={{ span: 24 }}
+                wrapperCol={{ span: 24 }}
+                // name={["order_items", index, "quantity"]}
+                name={[name, "glass", "quantity"]}
+              >
+                <InputNumber
+                  step={0.5}
+                  placeholder="Enter Quantity"
+                  style={{ width: "100%" }}
+                  suffix="Pair"
+                  onChange={handleQuantityChange}
+                />
+              </Form.Item>
+              <Typography.Text style={{ fontSize: "12px" }}>
+                <strong>Held Quantity: </strong>
+                {itemData?.[0]?.held_quantity}
+              </Typography.Text>
+              <Typography.Text style={{ fontSize: "12px" }}>
+                <strong> Quantity: </strong>
+                {updatedInventory?.held_quantity}
+              </Typography.Text>
+            </Col>
+            <Col span={3}>
+              <Form.Item
+                label="Price"
+                labelCol={{ span: 24 }}
+                wrapperCol={{ span: 24 }}
+                // name={["order_items", index, "price"]}
+                name={[name, "glass", "price"]}
+                style={{ margin: 0 }}
+              >
+                <Input placeholder="Enter Price" />
+              </Form.Item>
+              <Typography.Text style={{ fontSize: "12px" }}>
+                <strong>Unit Price: </strong>
+                {itemData?.[0]?.price}
+              </Typography.Text>
+            </Col>
+            <Col style={{ marginLeft: 10 }}>
+              <Form.Item style={{ marginTop: 40 }}>
+                <Button
+                  color="primary"
+                  variant="filled"
+                  onClick={addRow}
+                  icon={<PlusSquareTwoTone twoToneColor="#52c41a" />}
+                ></Button>
+              </Form.Item>
+            </Col>
+            <Col>
+              <Form.Item style={{ marginTop: 40 }}>
+                <Button
+                  color="danger"
+                  variant="filled"
+                  // onClick={() => removeRow(index)}
+                  onClick={onDelete}
+                  icon={<DeleteOutlined />}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+        </>
+      )}
     </>
   );
 }
